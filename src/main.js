@@ -15,8 +15,12 @@ export const Main = () => {
   const limit = 15;
 
   const loadProduct = async (order, sort) => {
+    console.log(
+      'fetch Path : ',
+      `${process.env.REACT_APP_SERVER}/main?order=${order}&limit=${limit}&sort=${sort}`
+    );
     const getProducts = await fetch(
-      `${process.env.REACT_APP_SERVER}/?order=${order}&limit=${limit}&sort=${sort}`
+      `${process.env.REACT_APP_SERVER}/main?order=${order}&limit=${limit}&sort=${sort}`
     ).then((res) => res.json());
     setProductList(getProducts);
   };

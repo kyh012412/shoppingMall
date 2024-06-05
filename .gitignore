@@ -5,6 +5,7 @@
 /.pnp
 .pnp.js
 memo.md
+/teamProject
 
 # testing
 /coverage

@@ -1,31 +1,31 @@
-import React from "react";
-import { useLocation, useNavigate } from "react-router-dom";
-import { useState, useEffect } from "react";
-import "../css/paySuccess.css";
-import ButtonBox from "../components/ButtonBox";
-import CustomButton from "../components/CustomButton";
-import { PaySuccessItem } from "../components/PaySuccessItem";
-import { jwtDecode } from "jwt-decode";
-import axios from "axios";
+import React from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import '../css/paySuccess.css';
+import ButtonBox from '../components/ButtonBox';
+import CustomButton from '../components/CustomButton';
+import { PaySuccessItem } from '../components/PaySuccessItem';
+import { jwtDecode } from 'jwt-decode';
+import axios from 'axios';
 
 export const PaySuccess = () => {
   const [paidItemList, setPaidItemList] = useState([]);
-  const [id, setId] = useState("");
-  const [userName, setUserName] = useState("");
+  const [id, setId] = useState('');
+  const [userName, setUserName] = useState('');
   const location = useLocation();
   const navigate = useNavigate();
   const { paySelect, list, orderSum, paySelectSumPrice } = location.state;
 
   const handleHome = () => {
-    navigate("/");
+    navigate('/');
   };
 
   const handleProductList = () => {
-    navigate("/productList");
+    navigate('/productList');
   };
 
   const handlePayBuyList = () => {
-    navigate("/payBuyList");
+    navigate('/payBuyList');
   };
 
   useEffect(() => {
@@ -34,7 +34,9 @@ export const PaySuccess = () => {
   }, []);
 
   const getUser = async () => {
-    const res = await axios.get(`http://localhost:5000/userProfile/${id}`);
+    const res = await axios.get(
+      `${process.env.REACT_APP_SERVER}/userProfile/${id}`
+    );
     const data = res.data; //user정보를 다 가져옴
     console.log(data);
     setUserName(data.userName);
@@ -43,9 +45,9 @@ export const PaySuccess = () => {
   //userId 가져오기
   useEffect(() => {
     //현재 token이 sessionStorage(공간)에 id를 암호화한 상태로 저장되어있음(pk 유니크)
-    const token = sessionStorage.getItem("token");
-    if (id === "" && !token) {
-      navigate("/login");
+    const token = sessionStorage.getItem('token');
+    if (id === '' && !token) {
+      navigate('/login');
     } else {
       //jwt : Json Web Token
       //Decode : 복호화(암호해독)
@@ -53,7 +55,7 @@ export const PaySuccess = () => {
       setId(decodeToken.id); //화면 다시 로딩될때 바뀜
     }
 
-    if (id !== "") {
+    if (id !== '') {
       getUser();
     }
   }, [id]);
@@ -64,7 +66,13 @@ export const PaySuccess = () => {
         <div className="overlap">
           <div className="innerBox">
             <div className="overlapGroup">
-              <img src="https://cdn-icons-png.flaticon.com/512/6217/6217772.png" alt="구매완료" width="30px" height="30px" className="okImg"/>
+              <img
+                src="https://cdn-icons-png.flaticon.com/512/6217/6217772.png"
+                alt="구매완료"
+                width="30px"
+                height="30px"
+                className="okImg"
+              />
               <div className="price"></div>
               <div className="successMessage">
                 <b>구매가 정상적으로 완료되었습니다</b>

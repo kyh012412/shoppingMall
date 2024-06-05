@@ -1,22 +1,22 @@
-import React, { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
-import "./main.css";
+import React, { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
+import './main.css';
 
 //컴포넌트
-import { Nav } from "./components/nav";
-import { Product } from "./components/product";
-import { Visual } from "./components/visual";
-import { Footer } from "./components/footer";
+import { Nav } from './components/nav';
+import { Product } from './components/product';
+import { Visual } from './components/visual';
+import { Footer } from './components/footer';
 
 export const Main = () => {
-  const [order, setOrder] = useState("createdAt");
-  const [sort, setSort] = useState("asc");
+  const [order, setOrder] = useState('createdAt');
+  const [sort, setSort] = useState('asc');
   const [productList, setProductList] = useState([]);
   const limit = 15;
 
   const loadProduct = async (order, sort) => {
     const getProducts = await fetch(
-      `http://localhost:5000/?order=${order}&limit=${limit}&sort=${sort}`
+      `${process.env.REACT_APP_SERVER}/?order=${order}&limit=${limit}&sort=${sort}`
     ).then((res) => res.json());
     setProductList(getProducts);
   };
@@ -24,16 +24,16 @@ export const Main = () => {
   const changeCondition = (e) => {
     const { innerText } = e.target;
 
-    if (innerText === "최신순" || innerText === "오래된 순") {
-      if (innerText === "최신순") {
-        setSort("asc");
+    if (innerText === '최신순' || innerText === '오래된 순') {
+      if (innerText === '최신순') {
+        setSort('asc');
       } else {
-        setSort("desc");
+        setSort('desc');
       }
     } else {
-      if (innerText === "날짜") setOrder("createdAt");
-      else if (innerText === "가격") setOrder("price");
-      else if (innerText === "이름") setOrder("name");
+      if (innerText === '날짜') setOrder('createdAt');
+      else if (innerText === '가격') setOrder('price');
+      else if (innerText === '이름') setOrder('name');
     }
   };
 
@@ -50,7 +50,7 @@ export const Main = () => {
           <Link className="link" to="/productList">
             <h1>Pick & Fit</h1>
           </Link>
-          <div className="div" style={{ display: "flex" }}>
+          <div className="div" style={{ display: 'flex' }}>
             <div className="order">
               <p>
                 <span onClick={changeCondition}>날짜</span>

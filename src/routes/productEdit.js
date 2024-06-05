@@ -1,16 +1,16 @@
-import React, { useEffect, useRef, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
-import { XCircleFill } from "react-bootstrap-icons";
-import { MyDropzone } from "../components/DropZone";
-import Swal from "sweetalert2";
-import "../css/productEdit.css";
+import React, { useEffect, useRef, useState } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
+import { XCircleFill } from 'react-bootstrap-icons';
+import { MyDropzone } from '../components/DropZone';
+import Swal from 'sweetalert2';
+import '../css/productEdit.css';
 
 //컴포넌트
-import { Nav } from "../components/nav";
-import { SubImagePreview } from "../components/subImgPreview";
-import { ProductOption, EditInfo } from "../components/productOptionAdd";
-import ButtonBox from "../components/ButtonBox";
-import CustomButton from "../components/CustomButton";
+import { Nav } from '../components/nav';
+import { SubImagePreview } from '../components/subImgPreview';
+import { ProductOption, EditInfo } from '../components/productOptionAdd';
+import ButtonBox from '../components/ButtonBox';
+import CustomButton from '../components/CustomButton';
 
 export const ProductEdit = () => {
   const id = useParams().id;
@@ -22,22 +22,22 @@ export const ProductEdit = () => {
   const [newOption, setNewOption] = useState([]);
   const [optionLength, setOptionLength] = useState(0);
   const [detailBar, setDetailBar] = useState([]);
-  const [checkDetail, setCheckDetail] = useState("");
+  const [checkDetail, setCheckDetail] = useState('');
   const [mainImageFile, setMainImageFile] = useState();
-  const category = ["아우터", "상의", "하의", "신발", "악세사리"];
-  const [checkCategory, setCheckCategory] = useState("");
+  const category = ['아우터', '상의', '하의', '신발', '악세사리'];
+  const [checkCategory, setCheckCategory] = useState('');
   const [count, setCount] = useState(0);
   const [descriptionImgArray, setDescriptionImgArray] = useState([]);
 
   const subImageCount = [0, 1, 2];
-  const subImageId = ["subImage1", "subImage2", "subImage3"];
+  const subImageId = ['subImage1', 'subImage2', 'subImage3'];
 
   const detail = {
-    아우터: ["코트", "블레이저", "패딩", "자켓", "가디건"],
-    상의: ["반팔", "긴팔", "티셔츠", "니트", "나시"],
-    하의: ["청바지", "슬랙스", "카고바지", "반바지"],
-    신발: ["샌들/슬리퍼", "운동화/단화", "구두/워커"],
-    악세사리: ["양말", "가방", "피어싱", "헤어", "기타"],
+    아우터: ['코트', '블레이저', '패딩', '자켓', '가디건'],
+    상의: ['반팔', '긴팔', '티셔츠', '니트', '나시'],
+    하의: ['청바지', '슬랙스', '카고바지', '반바지'],
+    신발: ['샌들/슬리퍼', '운동화/단화', '구두/워커'],
+    악세사리: ['양말', '가방', '피어싱', '헤어', '기타'],
   };
 
   const handleCancle = () => {
@@ -45,24 +45,24 @@ export const ProductEdit = () => {
   };
 
   const loadProduct = async () => {
-    const getProduct = await fetch(`http://localhost:5000/product/${id}`).then(
-      (res) => {
-        return res.json();
-      }
-    );
+    const getProduct = await fetch(
+      `${process.env.REACT_APP_SERVER}/product/${id}`
+    ).then((res) => {
+      return res.json();
+    });
     setNewProduct(getProduct);
     setCheckCategory(getProduct.category);
     setCheckDetail(getProduct.detail);
     setMainImageFile(getProduct.mainImage);
     if (getProduct.description) {
-      const splitArr = getProduct.description.split(",");
+      const splitArr = getProduct.description.split(',');
       setDescriptionImgArray(splitArr.slice(0, splitArr.length - 1));
     }
   };
 
   const loadOption = async () => {
     const loadData = await fetch(
-      `http://localhost:5000/productOption/${id}`
+      `${process.env.REACT_APP_SERVER}/productOption/${id}`
     ).then((res) => {
       return res.json();
     });
@@ -75,26 +75,26 @@ export const ProductEdit = () => {
     const reader = new FileReader();
     if (file) {
       reader.readAsDataURL(file);
-      const extension = file.name.split(".").pop().toLowerCase();
+      const extension = file.name.split('.').pop().toLowerCase();
       const allowedExtensions = [
-        "jpg",
-        "png",
-        "bmp",
-        "gif",
-        "tif",
-        "webp",
-        "heic",
-        "pdf",
+        'jpg',
+        'png',
+        'bmp',
+        'gif',
+        'tif',
+        'webp',
+        'heic',
+        'pdf',
       ]; // 허용되는 확장자 목록
 
       if (!allowedExtensions.includes(extension)) {
         Swal.fire({
-          icon: "error",
-          title: "이미지를 업로드하는데 실패했습니다.",
+          icon: 'error',
+          title: '이미지를 업로드하는데 실패했습니다.',
           text: `${file.name} 파일은 허용되지 않는 확장자입니다.`,
           showConfirmButton: true,
-          confirmButtonText: "확인",
-          confirmButtonColor: "#007bff",
+          confirmButtonText: '확인',
+          confirmButtonColor: '#007bff',
         });
         mainImgRef.value = mainImageFile; // 파일 선택 취소
         return; // 다음 파일 처리 중단
@@ -113,8 +113,8 @@ export const ProductEdit = () => {
 
   const checkOnlyOneCategory = (checkThis) => {
     if (checkThis.checked === false) {
-      setCheckCategory("");
-      setCheckDetail("");
+      setCheckCategory('');
+      setCheckDetail('');
     } else {
       setCheckCategory(checkThis.name);
     }
@@ -122,7 +122,7 @@ export const ProductEdit = () => {
 
   const checkOnlyOneDetail = (checkThis) => {
     if (checkThis.checked === false) {
-      setCheckDetail("");
+      setCheckDetail('');
     } else {
       setCheckDetail(checkThis.name);
     }
@@ -134,7 +134,7 @@ export const ProductEdit = () => {
       category: checkCategory,
       detail: checkDetail,
     });
-    checkCategory !== ""
+    checkCategory !== ''
       ? setDetailBar(detail[checkCategory])
       : setDetailBar([]);
   };
@@ -197,93 +197,93 @@ export const ProductEdit = () => {
     e.preventDefault();
 
     try {
-      if (newProduct.category === "") {
+      if (newProduct.category === '') {
         Swal.fire({
-          icon: "warning",
-          title: "카테고리 란이 비어있습니다.",
+          icon: 'warning',
+          title: '카테고리 란이 비어있습니다.',
           text: ` 카테고리를 선택해주세요.`,
           showConfirmButton: true,
-          confirmButtonText: "확인",
-          confirmButtonColor: "#007bff",
+          confirmButtonText: '확인',
+          confirmButtonColor: '#007bff',
         });
         return;
       }
-      if (newProduct.detail === "") {
+      if (newProduct.detail === '') {
         Swal.fire({
-          icon: "warning",
-          title: "디테일 란이 비어있습니다.",
+          icon: 'warning',
+          title: '디테일 란이 비어있습니다.',
           text: ` 디테일을 선택해주세요.`,
           showConfirmButton: true,
-          confirmButtonText: "확인",
-          confirmButtonColor: "#007bff",
+          confirmButtonText: '확인',
+          confirmButtonColor: '#007bff',
         });
         return;
       }
-      if (newProduct.name === "" || newProduct.name === null) {
+      if (newProduct.name === '' || newProduct.name === null) {
         Swal.fire({
-          icon: "warning",
-          title: "이름 란이 비어있습니다.",
+          icon: 'warning',
+          title: '이름 란이 비어있습니다.',
           text: ` 상품의 이름을 입력해주세요.`,
           showConfirmButton: true,
-          confirmButtonText: "확인",
-          confirmButtonColor: "#007bff",
+          confirmButtonText: '확인',
+          confirmButtonColor: '#007bff',
         });
         return;
       }
       if (newProduct.price <= 0) {
         Swal.fire({
-          icon: "warning",
-          title: "가격을 입력하지 않았거나 올바르게 입력하지 않았습니다.",
+          icon: 'warning',
+          title: '가격을 입력하지 않았거나 올바르게 입력하지 않았습니다.',
           text: ` 가격을 입력해주세요.`,
           showConfirmButton: true,
-          confirmButtonText: "확인",
-          confirmButtonColor: "#007bff",
+          confirmButtonText: '확인',
+          confirmButtonColor: '#007bff',
         });
         return;
       }
-      if (newProduct.mainImage === "") {
+      if (newProduct.mainImage === '') {
         Swal.fire({
-          icon: "warning",
-          title: "이미지를 선택하지 않았습니다.",
+          icon: 'warning',
+          title: '이미지를 선택하지 않았습니다.',
           text: ` 상품의 메인이미지를 선택주세요.`,
           showConfirmButton: true,
-          confirmButtonText: "확인",
-          confirmButtonColor: "#007bff",
+          confirmButtonText: '확인',
+          confirmButtonColor: '#007bff',
         });
         return;
       }
       for (let index of newOption) {
         console.log(index.size);
-        if (index.color === "") {
+        if (index.color === '') {
           Swal.fire({
-            icon: "warning",
-            title: "색상이 비어있습니다.",
+            icon: 'warning',
+            title: '색상이 비어있습니다.',
             text: ` 상품의 색상을 입력해주세요.`,
             showConfirmButton: true,
-            confirmButtonText: "확인",
-            confirmButtonColor: "#007bff",
+            confirmButtonText: '확인',
+            confirmButtonColor: '#007bff',
           });
           return;
         }
         if (index.stock < 1) {
           Swal.fire({
-            icon: "warning",
-            title: "해당 옵션의 재고란이 비어있습니다.",
+            icon: 'warning',
+            title: '해당 옵션의 재고란이 비어있습니다.',
             text: ` 재고를 입력해주세요.`,
             showConfirmButton: true,
-            confirmButtonText: "확인",
-            confirmButtonColor: "#007bff",
+            confirmButtonText: '확인',
+            confirmButtonColor: '#007bff',
           });
           return;
         }
         if (index.size === undefined) {
           Swal.fire({
-            icon: "warning",
-            title: "선택하지 않은 사이즈가 있습니다.",
+            icon: 'warning',
+            title: '선택하지 않은 사이즈가 있습니다.',
             text: ` 해당 옵션의 사이즈를 입력해주세요.`,
             showConfirmButton: true,
-            confirmButtonText: "확인",
-            confirmButtonColor: "#007bff",
+            confirmButtonText: '확인',
+            confirmButtonColor: '#007bff',
           });
           return;
         }
@@ -292,12 +292,12 @@ export const ProductEdit = () => {
       for (let index of option) {
         if (index.stock < 1) {
           Swal.fire({
-            icon: "warning",
-            title: "해당 옵션의 재고란이 비어있습니다.",
+            icon: 'warning',
+            title: '해당 옵션의 재고란이 비어있습니다.',
             text: ` 재고를 입력해주세요.`,
             showConfirmButton: true,
-            confirmButtonText: "확인",
-            confirmButtonColor: "#007bff",
+            confirmButtonText: '확인',
+            confirmButtonColor: '#007bff',
           });
           return;
         }
@@ -309,37 +309,37 @@ export const ProductEdit = () => {
         option,
       };
 
-      await fetch(`http://localhost:5000/productEdit/${id}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
+      await fetch(`${process.env.REACT_APP_SERVER}/productEdit/${id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(body),
       }).then((res) => {
         res.json();
         if (res.ok) {
           Swal.fire({
-            icon: "success",
-            title: "성공",
-            text: "제품 정보를 수정하는데 성공했습니다.",
+            icon: 'success',
+            title: '성공',
+            text: '제품 정보를 수정하는데 성공했습니다.',
             showConfirmButton: true,
-            confirmButtonText: "확인",
-            confirmButtonColor: "#007bff",
+            confirmButtonText: '확인',
+            confirmButtonColor: '#007bff',
           });
           navigate(`/productList/detail/description/${id}`);
         } else {
           Swal.fire({
-            icon: "warning",
-            title: "실패",
-            text: "제품의 정보를 수정하는데 실패했습니다.",
+            icon: 'warning',
+            title: '실패',
+            text: '제품의 정보를 수정하는데 실패했습니다.',
             showConfirmButton: true,
-            confirmButtonText: "확인",
-            confirmButtonColor: "#007bff",
+            confirmButtonText: '확인',
+            confirmButtonColor: '#007bff',
           });
           console.log(newProduct);
           return;
         }
       });
     } catch (error) {
-      alert("제품 수정 중 오류가 발생했습니다.");
+      alert('제품 수정 중 오류가 발생했습니다.');
       console.log(error);
       return;
     }
@@ -430,17 +430,17 @@ export const ProductEdit = () => {
               <div className="boxWrap">
                 <div className="div">
                   <label htmlFor="mainImage">
-                    <div className="addImg" style={{ marginLeft: "5px" }}>
+                    <div className="addImg" style={{ marginLeft: '5px' }}>
                       +
                     </div>
                   </label>
                   <img
                     style={{
                       display: newProduct.mainImage
-                        ? "block"
+                        ? 'block'
                         : mainImageFile
-                        ? "block"
-                        : "none",
+                        ? 'block'
+                        : 'none',
                     }}
                     className="previewImg main"
                     src={!mainImageFile ? newProduct.mainImage : mainImageFile}
@@ -485,7 +485,7 @@ export const ProductEdit = () => {
             <div className="descriptionImgWrap">
               {descriptionImgArray.map((img, index) => {
                 return (
-                  <div key={index} style={{ display: "flex" }}>
+                  <div key={index} style={{ display: 'flex' }}>
                     <img src={img} alt="이미지" className="descriptionImg" />
                     <XCircleFill
                       className="deleteDescription"

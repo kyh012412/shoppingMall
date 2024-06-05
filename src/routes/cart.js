@@ -1,28 +1,30 @@
-import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { jwtDecode } from "jwt-decode";
-import "../css/cart.css";
-import axios from "axios";
+import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { jwtDecode } from 'jwt-decode';
+import '../css/cart.css';
+import axios from 'axios';
 
 //컴포넌트
-import { Nav } from "../components/nav";
-import { CartItem } from "../components/CartItem";
-import ButtonBox from "../components/ButtonBox";
-import CustomButton from "../components/CustomButton";
-import { Myalter } from "../components/Myalter";
+import { Nav } from '../components/nav';
+import { CartItem } from '../components/CartItem';
+import ButtonBox from '../components/ButtonBox';
+import CustomButton from '../components/CustomButton';
+import { Myalter } from '../components/Myalter';
 
 export const Cart = () => {
   //장바구니에 담길 내용
   const [cartItemList, setCartItemList] = useState([]);
 
   const [userProfile, setUserProfile] = useState({});
-  const [id, setId] = useState("");
+  const [id, setId] = useState('');
   //네비게이션 선언
   const navigate = useNavigate();
 
   //비로그인시 장바구니에 접근하지 못하도록 하는
   const userFetch = async () => {
-    const response = await fetch(`http://localhost:5000/userProfile/${id}`);
+    const response = await fetch(
+      `${process.env.REACT_APP_SERVER}/userProfile/${id}`
+    );
     const body = await response.json();
     return body;
   };
@@ -34,7 +36,7 @@ export const Cart = () => {
 
   //유저별 상품조회
   const userFetchProducts = async () => {
-    const response = await fetch(`http://localhost:5000/Cart/${id}`);
+    const response = await fetch(`${process.env.REACT_APP_SERVER}/Cart/${id}`);
     const body = await response.json();
     return body;
   };
@@ -58,9 +60,9 @@ export const Cart = () => {
 
   useEffect(() => {
     //현재 token이 sessionStorage(공간)에 id를 암호화한 상태로 저장되어있음(pk 유니크)
-    const token = sessionStorage.getItem("token");
-    if (id === "" && !token) {
-      navigate("/login");
+    const token = sessionStorage.getItem('token');
+    if (id === '' && !token) {
+      navigate('/login');
     } else {
       //jwt : Json Web Token
       //Decode : 복호화(암호해독)
@@ -68,7 +70,7 @@ export const Cart = () => {
       setId(decodeToken.id); //화면 다시 로딩될때 바뀜
     }
 
-    if (id !== "") {
+    if (id !== '') {
       getUserProfile();
       getProducts(id);
     }
@@ -108,12 +110,12 @@ export const Cart = () => {
       .sort((a, b) => a.id - b.id);
 
     if (selectedCartItemList.length === 0) {
-      Myalter("warning", "장바구니 가이드", "결제하실 상품을 골라주세요");
+      Myalter('warning', '장바구니 가이드', '결제하실 상품을 골라주세요');
       return;
     }
 
     //payment로 선택된 상품 전달
-    navigate("/payment", {
+    navigate('/payment', {
       state: {
         list: selectedCartItemList,
       },
@@ -126,7 +128,7 @@ export const Cart = () => {
       (val) => val.isChecked === true
     );
     if (selectedCartItemList.length === 0) {
-      Myalter("warning", "장바구니 가이드", "삭제하실 상품을 골라주세요");
+      Myalter('warning', '장바구니 가이드', '삭제하실 상품을 골라주세요');
       return;
     }
 
@@ -138,16 +140,16 @@ export const Cart = () => {
 
     try {
       //axios 에서는 data란 key값으로 우리가 원하는 객체를 보냄
-      const res = await axios.delete("http://localhost:5000/cart", {
+      const res = await axios.delete(`${process.env.REACT_APP_SERVER}/cart`, {
         data: body,
       });
 
       const data = res.data;
-      Myalter("warning", "장바구니 가이드", data.message);
+      Myalter('warning', '장바구니 가이드', data.message);
       getProducts();
     } catch (error) {
       console.error(error);
-      Myalter("warning", "장바구니 가이드", "삭제 실패");
+      Myalter('warning', '장바구니 가이드', '삭제 실패');
     }
   };
 

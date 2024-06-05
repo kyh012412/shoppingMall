@@ -1,33 +1,35 @@
-import { Link, useNavigate } from "react-router-dom";
-import "../css/userProfile.css";
-import { useEffect, useState } from "react";
-import { jwtDecode } from "jwt-decode";
+import { Link, useNavigate } from 'react-router-dom';
+import '../css/userProfile.css';
+import { useEffect, useState } from 'react';
+import { jwtDecode } from 'jwt-decode';
 
 export const UserProfile = () => {
-  const [imageUrl, setImageUrl] = useState("");
+  const [imageUrl, setImageUrl] = useState('');
   const navigate = useNavigate();
   const goback = () => {
-    navigate("/");
+    navigate('/');
   };
 
   const [userProfile, setUserProfile] = useState({});
   const [id, setId] = useState();
 
   const userFetch = async () => {
-    const response = await fetch(`http://localhost:5000/userProfile/${id}`);
+    const response = await fetch(
+      `${process.env.REACT_APP_SERVER}/userProfile/${id}`
+    );
     const body = await response.json();
     return body;
   };
 
-  const getUserProfile = async id => {
+  const getUserProfile = async (id) => {
     const user = await userFetch(id);
     setUserProfile(user);
   };
 
   useEffect(() => {
-    const token = sessionStorage.getItem("token");
+    const token = sessionStorage.getItem('token');
     if (!token) {
-      navigate("/");
+      navigate('/');
     } else {
       const decodeToken = jwtDecode(token);
       setId(decodeToken.id);
@@ -42,8 +44,8 @@ export const UserProfile = () => {
           <img
             className="profileImage"
             src={userProfile.profileImg}
-            onError={() => setImageUrl("../img/userDefaultImg.png")}
-            alt={"../img/userDefaultImg.png"}
+            onError={() => setImageUrl('../img/userDefaultImg.png')}
+            alt={'../img/userDefaultImg.png'}
           />
           <div className="userEditBox">
             <div className="boxId">
@@ -82,7 +84,7 @@ export const UserProfile = () => {
               <div className="box">
                 <p className="title">
                   성별 <br></br>
-                  <span>{userProfile.gender === "M" ? "남자" : "여자"}</span>
+                  <span>{userProfile.gender === 'M' ? '남자' : '여자'}</span>
                 </p>
               </div>
             </div>

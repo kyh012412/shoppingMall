@@ -1,15 +1,15 @@
-import React, { useEffect, useRef, useState } from "react";
-import { jwtDecode } from "jwt-decode";
-import { Link, useNavigate, useParams } from "react-router-dom";
-import Swal from "sweetalert2";
-import "../css/productDetailDescription.css";
+import React, { useEffect, useRef, useState } from 'react';
+import { jwtDecode } from 'jwt-decode';
+import { Link, useNavigate, useParams } from 'react-router-dom';
+import Swal from 'sweetalert2';
+import '../css/productDetailDescription.css';
 
 //컴포넌트
-import { Nav } from "../components/nav";
-import { ProductDescription } from "../components/productDescription";
-import { ProductReview } from "../components/productReview";
-import { Myalter } from "../components/Myalter";
-import { Footer } from "../components/footer";
+import { Nav } from '../components/nav';
+import { ProductDescription } from '../components/productDescription';
+import { ProductReview } from '../components/productReview';
+import { Myalter } from '../components/Myalter';
+import { Footer } from '../components/footer';
 
 export const ProductDetailDescription = () => {
   const navigate = useNavigate();
@@ -27,43 +27,44 @@ export const ProductDetailDescription = () => {
   const [color, setColor] = useState([]);
   const [size, setSize] = useState([]);
   const [option, setOption] = useState([]);
-  const [selectedSize, setSelectedSize] = useState("");
-  const [selectedColor, setSelectedColor] = useState("");
+  const [selectedSize, setSelectedSize] = useState('');
+  const [selectedColor, setSelectedColor] = useState('');
 
-  const handleChangeSize = event => {
+  const handleChangeSize = (event) => {
     setSelectedSize(event.target.value);
   };
 
-  const handleChangeColor = event => {
+  const handleChangeColor = (event) => {
     setSelectedColor(event.target.value);
   };
 
-  const handleSubmit = async e => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    const isLogin = sessionStorage.getItem("token");
+    const isLogin = sessionStorage.getItem('token');
     if (!isLogin) {
-      Myalter("warning", "구매 가이드", "로그인 후 사용할 수 있습니다");
+      Myalter('warning', '구매 가이드', '로그인 후 사용할 수 있습니다');
       return;
     }
     const { id } = jwtDecode(isLogin);
 
-    if (selectedSize === "") {
-      Myalter("warning", "구매 가이드", "사이즈를 선택하세요");
+    if (selectedSize === '') {
+      Myalter('warning', '구매 가이드', '사이즈를 선택하세요');
       return;
-    } else if (selectedColor === "") {
-      Myalter("warning", "구매 가이드", "색상을 선택하세요");
+    } else if (selectedColor === '') {
+      Myalter('warning', '구매 가이드', '색상을 선택하세요');
       return;
     } else if (stock == 0) {
-      Myalter("warning", "구매 가이드", "수량이 0입니다");
+      Myalter('warning', '구매 가이드', '수량이 0입니다');
       return;
     } else {
       const response = await fetch(
-        `http://localhost:5000/productOption/${productId}`
+        `${process.env.REACT_APP_SERVER}/productOption/${productId}`
       );
       const productOptions = await response.json();
 
       const selectedProductOption = productOptions.find(
-        option => option.size === selectedSize && option.color === selectedColor
+        (option) =>
+          option.size === selectedSize && option.color === selectedColor
       );
 
       const updatedFormData = {
@@ -76,69 +77,70 @@ export const ProductDetailDescription = () => {
       };
 
       try {
-        const response = await fetch("http://localhost:5000/cart/", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
+        const response = await fetch(`${process.env.REACT_APP_SERVER}/cart/`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(updatedFormData),
         });
 
         if (!response.ok) {
-          throw new Error("서버에서 응답을 받을 수 없습니다");
+          throw new Error('서버에서 응답을 받을 수 없습니다');
         } else {
           let no = await response.json();
           if (no.result == false) {
             const alrterResult = await Swal.fire({
-              icon: "question",
-              title: "구매 가이드",
-              text: "장바구니에 상품을 추가했습니다 장바구니로 이동하시겠습니까?",
+              icon: 'question',
+              title: '구매 가이드',
+              text: '장바구니에 상품을 추가했습니다 장바구니로 이동하시겠습니까?',
               showCancelButton: true,
-              confirmButtonText: "확인",
-              cancelButtonText: "취소",
+              confirmButtonText: '확인',
+              cancelButtonText: '취소',
             });
-            if (alrterResult.isConfirmed) navigate("/cart");
+            if (alrterResult.isConfirmed) navigate('/cart');
           } else {
             const alrterResult = await Swal.fire({
-              icon: "question",
-              title: "구매 가이드",
-              text: "장바구니에 상품을 추가했습니다 장바구니로 이동하시겠습니까?",
+              icon: 'question',
+              title: '구매 가이드',
+              text: '장바구니에 상품을 추가했습니다 장바구니로 이동하시겠습니까?',
               showCancelButton: true,
-              confirmButtonText: "확인",
-              cancelButtonText: "취소",
+              confirmButtonText: '확인',
+              cancelButtonText: '취소',
             });
-            if (alrterResult.isConfirmed) navigate("/cart");
+            if (alrterResult.isConfirmed) navigate('/cart');
           }
         }
       } catch (error) {
-        Myalter("warning", "구매 가이드", "오류가 발생했습니다");
+        Myalter('warning', '구매 가이드', '오류가 발생했습니다');
       }
     }
   };
 
-  const handlePayment = async e => {
-    const isLogin = sessionStorage.getItem("token");
+  const handlePayment = async (e) => {
+    const isLogin = sessionStorage.getItem('token');
     if (!isLogin) {
-      Myalter("warning", "구매 가이드", "로그인 후 사용할 수 있습니다");
+      Myalter('warning', '구매 가이드', '로그인 후 사용할 수 있습니다');
       return;
     }
     const { id } = jwtDecode(isLogin);
 
-    if (selectedSize === "") {
-      Myalter("warning", "구매 가이드", "사이즈를 선택하세요");
+    if (selectedSize === '') {
+      Myalter('warning', '구매 가이드', '사이즈를 선택하세요');
       return;
-    } else if (selectedColor === "") {
-      Myalter("warning", "구매 가이드", "색상을 선택하세요");
+    } else if (selectedColor === '') {
+      Myalter('warning', '구매 가이드', '색상을 선택하세요');
       return;
     } else if (stock == 0) {
-      Myalter("warning", "구매 가이드", "수량이 0입니다");
+      Myalter('warning', '구매 가이드', '수량이 0입니다');
       return;
     } else {
       const response = await fetch(
-        `http://localhost:5000/productOption/${productId}`
+        `${process.env.REACT_APP_SERVER}/productOption/${productId}`
       );
       const productOptions = await response.json();
 
       const selectedProductOption = productOptions.find(
-        option => option.size === selectedSize && option.color === selectedColor
+        (option) =>
+          option.size === selectedSize && option.color === selectedColor
       );
 
       const updatedFormData = {
@@ -153,26 +155,26 @@ export const ProductDetailDescription = () => {
       };
 
       if (updatedFormData) {
-        navigate("/payment", { state: { list: [updatedFormData] } });
+        navigate('/payment', { state: { list: [updatedFormData] } });
       } else {
-        Myalter("warning", "구매 가이드", "상품을 선택하세요");
+        Myalter('warning', '구매 가이드', '상품을 선택하세요');
       }
     }
   };
 
   useEffect(() => {
     // productOption 데이터 가져오기
-    fetch("http://localhost:5000/productOption")
-      .then(response => response.json())
-      .then(data => {
+    fetch(`${process.env.REACT_APP_SERVER}/productOption`)
+      .then((response) => response.json())
+      .then((data) => {
         const productDetail = data.filter(
-          product => product.product_id == productId
+          (product) => product.product_id == productId
         );
         setOption(productDetail);
-        const newSize = productDetail.map(product => product.size);
+        const newSize = productDetail.map((product) => product.size);
         const sizeList = [...new Set(newSize)];
         setSize(sizeList.sort((a, b) => a - b));
-        const newColor = productDetail.map(product => product.color);
+        const newColor = productDetail.map((product) => product.color);
         const colorList = [...new Set(newColor)];
         setColor(colorList);
       });
@@ -182,7 +184,7 @@ export const ProductDetailDescription = () => {
     let newStock = [{ productStock: 0 }];
     if (selectedSize && selectedColor) {
       newStock = option.filter(
-        product =>
+        (product) =>
           product.size == selectedSize && product.color == selectedColor
       );
     }
@@ -201,18 +203,18 @@ export const ProductDetailDescription = () => {
 
   const loadProduct = async () => {
     const getProduct = await fetch(
-      `http://localhost:5000/product/${productId}`
-    ).then(res => res.json());
+      `${process.env.REACT_APP_SERVER}/product/${productId}`
+    ).then((res) => res.json());
     setProduct(getProduct);
   };
 
   // 받아온패치 실행해서 getUser에 담기
   const getUserTry = async () => {
-    const getUser = await fetch(`http://localhost:5000/userEdit/${id}`).then(
-      response => {
-        response.json();
-      }
-    );
+    const getUser = await fetch(
+      `${process.env.REACT_APP_SERVER}/userEdit/${id}`
+    ).then((response) => {
+      response.json();
+    });
     setUser(getUser);
   };
 
@@ -220,7 +222,7 @@ export const ProductDetailDescription = () => {
     setItem(productId);
     loadProduct();
     getUserTry();
-    const token = sessionStorage.getItem("token");
+    const token = sessionStorage.getItem('token');
     if (!token) {
       setId(999);
     } else {
@@ -242,7 +244,7 @@ export const ProductDetailDescription = () => {
     }
   };
 
-  const handleInputChange = e => {
+  const handleInputChange = (e) => {
     const number = Number(e.target.value);
     if (!number) {
       setStock(0);
@@ -271,8 +273,8 @@ export const ProductDetailDescription = () => {
     setIndexArray(prevIndexArray);
   }
 
-  const imgError = event => {
-    event.target.src = "/img/readyProduct.png";
+  const imgError = (event) => {
+    event.target.src = '/img/readyProduct.png';
   };
 
   const handleSwitchBtn = () => {
@@ -281,41 +283,44 @@ export const ProductDetailDescription = () => {
 
   const deleteProduct = async () => {
     const alrterResult = await Swal.fire({
-      icon: "question",
-      title: "구매 가이드",
-      text: "제품을 정말 삭제하시겠습니까?",
+      icon: 'question',
+      title: '구매 가이드',
+      text: '제품을 정말 삭제하시겠습니까?',
       showCancelButton: true,
-      confirmButtonText: "예",
-      cancelButtonText: "아니오",
+      confirmButtonText: '예',
+      cancelButtonText: '아니오',
     });
 
     if (!alrterResult.isConfirmed) {
       return;
     }
     try {
-      await fetch(`http://localhost:5000/productDelete/${productId}`, {
-        method: "DELETE",
-      })
-        .then(res => {
+      await fetch(
+        `${process.env.REACT_APP_SERVER}/productDelete/${productId}`,
+        {
+          method: 'DELETE',
+        }
+      )
+        .then((res) => {
           return res.json();
         })
-        .then(res => {
+        .then((res) => {
           if (res) {
-            Myalter("warning", "제품수정 가이드", "제품을 삭제했습니다");
-            navigate("/productList");
+            Myalter('warning', '제품수정 가이드', '제품을 삭제했습니다');
+            navigate('/productList');
           } else {
             Myalter(
-              "warning",
-              "제품수정 가이드",
-              "제품을 삭제하는데 실패했습니다."
+              'warning',
+              '제품수정 가이드',
+              '제품을 삭제하는데 실패했습니다.'
             );
           }
         });
     } catch (error) {
       Myalter(
-        "warning",
-        "제품수정 가이드",
-        "제품을 삭제하던 도중 오류가 발생했습니다."
+        'warning',
+        '제품수정 가이드',
+        '제품을 삭제하던 도중 오류가 발생했습니다.'
       );
     }
   };
@@ -336,7 +341,7 @@ export const ProductDetailDescription = () => {
                       src={
                         photos[indexArray[i]]
                           ? photos[indexArray[i]]
-                          : "/img/readyProduct.png"
+                          : '/img/readyProduct.png'
                       }
                       onError={imgError}
                       alt="제품 메인이미지"
@@ -349,11 +354,11 @@ export const ProductDetailDescription = () => {
                       src={
                         photos[indexArray[i]]
                           ? photos[indexArray[i]]
-                          : "/img/readyProduct.png"
+                          : '/img/readyProduct.png'
                       }
                       alt="제품 서브이미지"
                       onClick={() => jump(i)}
-                      className={"subThumbnail" + i}
+                      className={'subThumbnail' + i}
                     />
                   )
                 )}

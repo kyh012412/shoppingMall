@@ -1,18 +1,17 @@
-import { Link, useNavigate } from "react-router-dom";
-import "../css/login.css";
-import { useRef, useState } from "react";
-import Swal from "sweetalert2"
-
+import { Link, useNavigate } from 'react-router-dom';
+import '../css/login.css';
+import { useRef, useState } from 'react';
+import Swal from 'sweetalert2';
 
 export const Login = () => {
   const navigate = useNavigate();
   const goback = () => {
-    navigate("/");
+    navigate('/');
   };
 
   const [loginUser, setLoginUser] = useState({
-    username: "",
-    password: "",
+    username: '',
+    password: '',
   });
 
   const valueChange = (e) => {
@@ -24,86 +23,85 @@ export const Login = () => {
     e.preventDefault();
     if (!loginUser.username) {
       Swal.fire({
-        icon : 'warning',
-        title : '로그인 가이드',
-        text : '아이디를 입력하시오!!'
-      })
+        icon: 'warning',
+        title: '로그인 가이드',
+        text: '아이디를 입력하시오!!',
+      });
     } else if (!loginUser.password) {
       Swal.fire({
-        icon : 'warning',
-        title : '로그인 가이드',
-        text : '비밀번호를 입력하시오!!'
-      })
+        icon: 'warning',
+        title: '로그인 가이드',
+        text: '비밀번호를 입력하시오!!',
+      });
     } else {
       try {
-        const response = await fetch("http://localhost:5000/login/", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
+        const response = await fetch(`${process.env.REACT_APP_SERVER}/login/`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(loginUser),
         });
         if (!response.ok) {
           if (response.status === 401) {
             const errMessage = await response.json();
             Swal.fire({
-              icon : 'warning',
-              title : '로그인 가이드',
-              text : errMessage
-            })
+              icon: 'warning',
+              title: '로그인 가이드',
+              text: errMessage,
+            });
           } else {
-            throw new Error("서버에서 응답을 받을 수 없습니다");
+            throw new Error('서버에서 응답을 받을 수 없습니다');
           }
         } else {
           let user = await response.json();
           if (user) {
-            sessionStorage.setItem("token", user.token);
+            sessionStorage.setItem('token', user.token);
             Swal.fire({
-              icon : 'success',
-              title : '로그인 가이드',
-              text : '로그인 성공'
-            }).then(()=>{navigate('/')})
+              icon: 'success',
+              title: '로그인 가이드',
+              text: '로그인 성공',
+            }).then(() => {
+              navigate('/');
+            });
           } else {
             Swal.fire({
-              icon : 'warning',
-              title : '로그인 가이드',
-              text : '아이디/비밀번호가 일치하지않습니다'
-            })
+              icon: 'warning',
+              title: '로그인 가이드',
+              text: '아이디/비밀번호가 일치하지않습니다',
+            });
             return;
           }
         }
       } catch (error) {
         Swal.fire({
-          icon : 'warning',
-          title : '로그인 가이드',
-          text : '로그인 실패'
-        })
+          icon: 'warning',
+          title: '로그인 가이드',
+          text: '로그인 실패',
+        });
       }
     }
   };
 
   // 포커스반응
-  const placeRef = useRef()
-  const placeRef2 = useRef()
-  
-  const inputFocus = (e)=>{
-    if(e.target.name === 'username' ){
+  const placeRef = useRef();
+  const placeRef2 = useRef();
+
+  const inputFocus = (e) => {
+    if (e.target.name === 'username') {
       placeRef.current.style.top = '7px';
-    }
-    else{
+    } else {
       placeRef2.current.style.top = '7px';
     }
   };
 
-  const inputBlur = (e)=>{
-    if(e.target.name === 'username' && !e.target.value){
+  const inputBlur = (e) => {
+    if (e.target.name === 'username' && !e.target.value) {
       placeRef.current.style.top = '25px';
-    }else if(e.target.name === 'password' && !e.target.value){
+    } else if (e.target.name === 'password' && !e.target.value) {
       placeRef2.current.style.top = '25px';
-    }  
-  }
+    }
+  };
 
   //
-
-
 
   return (
     <div className="login">
@@ -112,7 +110,9 @@ export const Login = () => {
         <form className="loginBox">
           <div className="loginForm">
             <div className="inputUserId">
-              <label htmlFor='username' className="place1" ref={placeRef}>이메일</label>
+              <label htmlFor="username" className="place1" ref={placeRef}>
+                이메일
+              </label>
               <input
                 className="textWrapper2"
                 type="email"
@@ -124,7 +124,9 @@ export const Login = () => {
               />
             </div>
             <div className="inputUserpassword">
-              <label htmlFor = 'password' className="place2" ref={placeRef2}>비밀번호</label>
+              <label htmlFor="password" className="place2" ref={placeRef2}>
+                비밀번호
+              </label>
               <input
                 className="textWrapper2"
                 id="password"

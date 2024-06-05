@@ -1,8 +1,8 @@
-import { useNavigate } from "react-router-dom";
-import "../css/findPassword.css";
-import { useRef, useState } from "react";
-import Swal from "sweetalert2";
-import { Footer } from "../components/footer";
+import { useNavigate } from 'react-router-dom';
+import '../css/findPassword.css';
+import { useRef, useState } from 'react';
+import Swal from 'sweetalert2';
+import { Footer } from '../components/footer';
 
 export const FindPassword = () => {
   const navigate = useNavigate();
@@ -11,9 +11,9 @@ export const FindPassword = () => {
   };
 
   const [findPassword, setFindPassword] = useState({
-    userId: "",
-    email: "",
-    number: "",
+    userId: '',
+    email: '',
+    number: '',
   });
 
   // 아이디, 이메일 일치여부
@@ -34,25 +34,28 @@ export const FindPassword = () => {
     e.preventDefault();
     if (!findPassword.userId) {
       Swal.fire({
-        icon: "warning",
-        title: "비밀번호 찾기 가이드",
-        text: "아이디를 입력하시오",
+        icon: 'warning',
+        title: '비밀번호 찾기 가이드',
+        text: '아이디를 입력하시오',
       });
     } else if (!findPassword.email) {
       Swal.fire({
-        icon: "warning",
-        title: "비밀번호 찾기 가이드",
-        text: "이메일을 입력하시오",
+        icon: 'warning',
+        title: '비밀번호 찾기 가이드',
+        text: '이메일을 입력하시오',
       });
     } else {
       try {
-        const response = await fetch("http://localhost:5000/findPassword/", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(findPassword),
-        });
+        const response = await fetch(
+          `${process.env.REACT_APP_SERVER}/findPassword/`,
+          {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(findPassword),
+          }
+        );
         if (!response.ok) {
-          throw new Error("서버에서 응답을 받을 수 없습니다");
+          throw new Error('서버에서 응답을 받을 수 없습니다');
         } else {
           const result = await response.json();
           if (result.message) {
@@ -60,23 +63,23 @@ export const FindPassword = () => {
             setPassNum(result.passNum);
             setUserinfo(result.findUser);
             Swal.fire({
-              icon: "success",
-              title: "비밀번호 찾기 가이드",
-              text: "해당 이메일로 인증번호 발송",
+              icon: 'success',
+              title: '비밀번호 찾기 가이드',
+              text: '해당 이메일로 인증번호 발송',
             });
           } else {
             Swal.fire({
-              icon: "warning",
-              title: "비밀번호 찾기 가이드",
-              text: "아이디 혹은 이메일이 다릅니다",
+              icon: 'warning',
+              title: '비밀번호 찾기 가이드',
+              text: '아이디 혹은 이메일이 다릅니다',
             });
           }
         }
       } catch (error) {
         Swal.fire({
-          icon: "warning",
-          title: "비밀번호 찾기 가이드",
-          text: "비밀번호 찾기 중 오류가 발생했습니다",
+          icon: 'warning',
+          title: '비밀번호 찾기 가이드',
+          text: '비밀번호 찾기 중 오류가 발생했습니다',
         });
       }
     }
@@ -86,16 +89,16 @@ export const FindPassword = () => {
     e.preventDefault();
     if (passNum == findPassword.number) {
       Swal.fire({
-        icon: "success",
-        title: "비밀번호 찾기 가이드",
-        text: "인증성공",
+        icon: 'success',
+        title: '비밀번호 찾기 가이드',
+        text: '인증성공',
       });
       setPassResult(true);
     } else {
       Swal.fire({
-        icon: "warning",
-        title: "비밀번호 찾기 가이드",
-        text: "인증번호가 일치하지않습니다",
+        icon: 'warning',
+        title: '비밀번호 찾기 가이드',
+        text: '인증번호가 일치하지않습니다',
       });
     }
   };
@@ -103,37 +106,37 @@ export const FindPassword = () => {
   const linkButton = (e) => {
     e.preventDefault();
     if (passResult == true) {
-      navigate("/passwordEdit", { state: { id: userinfo } }); // 프롭스드릴링
+      navigate('/passwordEdit', { state: { id: userinfo } }); // 프롭스드릴링
     } else {
       Swal.fire({
-        icon: "warning",
-        title: "비밀번호 찾기 가이드",
-        text: "인증을 먼저 진행해주세요",
+        icon: 'warning',
+        title: '비밀번호 찾기 가이드',
+        text: '인증을 먼저 진행해주세요',
       });
     }
   };
 
   const placeRef = useRef();
   const placeRef2 = useRef();
-  const placeRef3 = useRef("test");
+  const placeRef3 = useRef('test');
 
   const inputFocus = (e) => {
-    if (e.target.name === "userId") {
-      placeRef.current.style.top = "7px";
-    } else if (e.target.name === "email") {
-      placeRef2.current.style.top = "7px";
+    if (e.target.name === 'userId') {
+      placeRef.current.style.top = '7px';
+    } else if (e.target.name === 'email') {
+      placeRef2.current.style.top = '7px';
     } else {
-      placeRef3.current.style.top = "7px";
+      placeRef3.current.style.top = '7px';
     }
   };
 
   const inputBlur = (e) => {
-    if (e.target.name === "userId" && !e.target.value) {
-      placeRef.current.style.top = "25px";
-    } else if (e.target.name === "email" && !e.target.value) {
-      placeRef2.current.style.top = "25px";
-    } else if (e.target.name === "number" && !e.target.value) {
-      placeRef3.current.style.top = "25px";
+    if (e.target.name === 'userId' && !e.target.value) {
+      placeRef.current.style.top = '25px';
+    } else if (e.target.name === 'email' && !e.target.value) {
+      placeRef2.current.style.top = '25px';
+    } else if (e.target.name === 'number' && !e.target.value) {
+      placeRef3.current.style.top = '25px';
     }
   };
 

@@ -1,21 +1,21 @@
-import "../css/nav.css";
-import { Link, useNavigate } from "react-router-dom";
-import { useEffect, useState } from "react";
-import { jwtDecode } from "jwt-decode";
-import { BoxArrowInRight, PersonAdd } from "react-bootstrap-icons";
+import '../css/nav.css';
+import { Link, useNavigate } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import { jwtDecode } from 'jwt-decode';
+import { BoxArrowInRight, PersonAdd } from 'react-bootstrap-icons';
 
 export const Nav = () => {
-  const isLogin = sessionStorage.getItem("token");
+  const isLogin = sessionStorage.getItem('token');
   // const [imageUrl, setImageUrl] = useState("");
-  const [imageUrl, setImageUrl] = useState("/img/userDefaultImg.png");
-  const category = ["아우터", "상의", "하의", "신발", "악세사리"];
+  const [imageUrl, setImageUrl] = useState('/img/userDefaultImg.png');
+  const category = ['아우터', '상의', '하의', '신발', '악세사리'];
 
   // 유저프로필 이미지
   const profileImageLoad = async () => {
     const { id } = jwtDecode(isLogin);
-    const loadData = await fetch(`http://localhost:5000/profile/${id}`).then(
-      (res) => res.json()
-    );
+    const loadData = await fetch(
+      `${process.env.REACT_APP_SERVER}/profile/${id}`
+    ).then((res) => res.json());
     setImageUrl(loadData);
   };
 
@@ -60,8 +60,8 @@ export const Nav = () => {
               <Link className="linkProfile" to="/userInfo">
                 <img
                   className="profileImage"
-                  src={imageUrl ? imageUrl : "/img/userDefaultImg.png"}
-                  onError={() => setImageUrl("/img/userDefaultImg.png")}
+                  src={imageUrl ? imageUrl : '/img/userDefaultImg.png'}
+                  onError={() => setImageUrl('/img/userDefaultImg.png')}
                   alt="유저프로필"
                 />
               </Link>

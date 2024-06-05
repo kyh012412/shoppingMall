@@ -1,11 +1,11 @@
-import { useNavigate } from "react-router-dom";
-import { useEffect, useRef, useState } from "react";
-import { jwtDecode } from "jwt-decode";
-import { Myalter } from "../components/Myalter";
-import "../css/userEdit.css";
+import { useNavigate } from 'react-router-dom';
+import { useEffect, useRef, useState } from 'react';
+import { jwtDecode } from 'jwt-decode';
+import { Myalter } from '../components/Myalter';
+import '../css/userEdit.css';
 
 //컴포넌트
-import AddressModal from "../components/AddressModal";
+import AddressModal from '../components/AddressModal';
 
 export const UserEdit = () => {
   const navigate = useNavigate();
@@ -13,26 +13,28 @@ export const UserEdit = () => {
     navigate(-1);
   };
   const [getUser, setGetUser] = useState({
-    email: "",
-    phoneNumber: "",
-    mainAddress: "",
-    detailAddress: "",
+    email: '',
+    phoneNumber: '',
+    mainAddress: '',
+    detailAddress: '',
   });
   const [id, setId] = useState();
   const [editUser, setEditUser] = useState({
-    password: "",
-    passwordCheck: "",
-    email: "",
-    phoneNumber: "",
-    mainAddress: "",
-    detailAddress: "",
+    password: '',
+    passwordCheck: '',
+    email: '',
+    phoneNumber: '',
+    mainAddress: '',
+    detailAddress: '',
   });
-  const [checkToggle, setCheckToggle] = useState("false");
+  const [checkToggle, setCheckToggle] = useState('false');
   const mainAddressRef = useRef(null);
 
   // 해당유저 정보받아오는 패치
   const getUserFetch = async () => {
-    const response = await fetch(`http://localhost:5000/userEdit/${id}`);
+    const response = await fetch(
+      `${process.env.REACT_APP_SERVER}/userEdit/${id}`
+    );
     const body = await response.json();
     return body;
   };
@@ -43,9 +45,9 @@ export const UserEdit = () => {
   };
 
   useEffect(() => {
-    const token = sessionStorage.getItem("token");
+    const token = sessionStorage.getItem('token');
     if (!token) {
-      navigate("/");
+      navigate('/');
     } else {
       const decodeToken = jwtDecode(token);
       setId(decodeToken.id);
@@ -56,8 +58,8 @@ export const UserEdit = () => {
   useEffect(() => {
     const editDefault = {
       profileImg: getUser.profileImg,
-      password: "",
-      passwordCheck: "",
+      password: '',
+      passwordCheck: '',
       email: getUser.email,
       phoneNumber: getUser.phoneNumber,
       mainAddress: getUser.mainAddress,
@@ -69,8 +71,8 @@ export const UserEdit = () => {
 
   const checkClick = (e) => {
     const { value } = e.target;
-    if (value == "false") {
-      setCheckToggle("true");
+    if (value == 'false') {
+      setCheckToggle('true');
       setEditUser((pre) => ({
         ...pre,
         password: getUser.password,
@@ -78,11 +80,11 @@ export const UserEdit = () => {
         gender: getUser.gender,
       }));
     } else {
-      setCheckToggle("false");
+      setCheckToggle('false');
       setEditUser((pre) => ({
         ...pre,
-        password: "",
-        passwordCheck: "",
+        password: '',
+        passwordCheck: '',
         gender: getUser.gender,
       }));
     }
@@ -97,25 +99,25 @@ export const UserEdit = () => {
     const selectFile = e.target.files[0];
     const reader = new FileReader();
     if (selectFile) {
-      const extension = selectFile.name.split(".").pop().toLowerCase();
+      const extension = selectFile.name.split('.').pop().toLowerCase();
       const allowedExtensions = [
-        "jpg",
-        "png",
-        "bmp",
-        "gif",
-        "tif",
-        "webp",
-        "heic",
-        "pdf",
+        'jpg',
+        'png',
+        'bmp',
+        'gif',
+        'tif',
+        'webp',
+        'heic',
+        'pdf',
       ]; // 허용되는 확장자 목록
 
       if (!allowedExtensions.includes(extension)) {
         Myalter(
-          "warning",
-          "유저 수정 가이드",
+          'warning',
+          '유저 수정 가이드',
           `${selectFile.name} 파일은 허용되지 않는 확장자입니다.`
         );
-        e.target.value = ""; // 파일 선택 취소
+        e.target.value = ''; // 파일 선택 취소
         return; // 다음 파일 처리 중단
       }
       reader.onloadend = () => {
@@ -128,34 +130,37 @@ export const UserEdit = () => {
   const buttonClick = async (e) => {
     e.preventDefault();
     if (!editUser.password) {
-      Myalter("warning", "유저 수정 가이드", "변경할 비밀번호를 입력하시오");
+      Myalter('warning', '유저 수정 가이드', '변경할 비밀번호를 입력하시오');
     } else if (!editUser.passwordCheck) {
-      Myalter("warning", "유저 수정 가이드", "비밀번호 재확인을 입력하시오");
+      Myalter('warning', '유저 수정 가이드', '비밀번호 재확인을 입력하시오');
     } else if (editUser.password !== editUser.passwordCheck) {
       Myalter(
-        "warning",
-        "유저 수정 가이드",
-        "비밀번호 재확인이 일치하지 않습니다"
+        'warning',
+        '유저 수정 가이드',
+        '비밀번호 재확인이 일치하지 않습니다'
       );
     } else {
       try {
-        const response = await fetch(`http://localhost:5000/userEdit/${id}`, {
-          method: "PUT",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(editUser),
-        });
+        const response = await fetch(
+          `${process.env.REACT_APP_SERVER}/userEdit/${id}`,
+          {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(editUser),
+          }
+        );
 
         if (!response.ok) {
-          throw new Error("서버에서 응답을 받을 수 없습니다");
+          throw new Error('서버에서 응답을 받을 수 없습니다');
         } else {
-          await Myalter("success", "유저 수정 가이드", "유저수정 완료");
-          navigate("/userProfile");
+          await Myalter('success', '유저 수정 가이드', '유저수정 완료');
+          navigate('/userProfile');
         }
       } catch (error) {
         Myalter(
-          "warning",
-          "유저 수정 가이드",
-          "유저 수정중 오류가 발생했습니다"
+          'warning',
+          '유저 수정 가이드',
+          '유저 수정중 오류가 발생했습니다'
         );
       }
     }
@@ -177,13 +182,13 @@ export const UserEdit = () => {
                 src={
                   editUser.profileImg
                     ? editUser.profileImg
-                    : "/img/userDefaultImg.png"
+                    : '/img/userDefaultImg.png'
                 }
                 onError={() => {
                   if (!getUser.profileImg) {
                     setGetUser({
                       ...getUser,
-                      profileImg: "../img/userDefaultImg.png",
+                      profileImg: '../img/userDefaultImg.png',
                     });
                   }
                 }}
@@ -206,7 +211,7 @@ export const UserEdit = () => {
               <label htmlFor="password" className="txt">
                 변경할 비밀번호
               </label>
-              {checkToggle == "true" ? (
+              {checkToggle == 'true' ? (
                 <input
                   id="password"
                   type="password"
@@ -229,7 +234,7 @@ export const UserEdit = () => {
               <label htmlFor="passwordCheck" className="txt">
                 비밀번호 재확인
               </label>
-              {checkToggle == "true" ? (
+              {checkToggle == 'true' ? (
                 <input
                   id="passwordCheck"
                   type="password"
@@ -313,7 +318,7 @@ export const UserEdit = () => {
                   className="radioMale"
                   value="M"
                   onChange={valueChange}
-                  checked={editUser.gender === "M"}
+                  checked={editUser.gender === 'M'}
                 />
                 <label htmlFor="female" className="textWrapper">
                   여
@@ -324,7 +329,7 @@ export const UserEdit = () => {
                   className="radioFemale"
                   value="F"
                   onChange={valueChange}
-                  checked={editUser.gender === "F"}
+                  checked={editUser.gender === 'F'}
                 />
               </div>
             </div>

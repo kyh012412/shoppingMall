@@ -1,15 +1,15 @@
-import { useEffect, useState } from "react";
-import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
-import "../css/toss.css";
-import { jwtDecode } from "jwt-decode";
-import ButtonBox from "../components/ButtonBox";
-import CustomButton from "../components/CustomButton";
-import axios from "axios";
+import { useEffect, useState } from 'react';
+import { useLocation, useNavigate, useSearchParams } from 'react-router-dom';
+import '../css/toss.css';
+import { jwtDecode } from 'jwt-decode';
+import ButtonBox from '../components/ButtonBox';
+import CustomButton from '../components/CustomButton';
+import axios from 'axios';
 
 export function SuccessPage() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  const [id, setId] = useState("");
+  const [id, setId] = useState('');
   const [stockList, setStockList] = useState([]);
   const [optionList, setOptionList] = useState([]);
   const [arrayList, setArrayList] = useState([]);
@@ -17,9 +17,9 @@ export function SuccessPage() {
   // const paymentList = location.state?.paymentList;
 
   useEffect(() => {
-    const token = sessionStorage.getItem("token");
-    if (id === "" && !token) {
-      navigate("/login");
+    const token = sessionStorage.getItem('token');
+    if (id === '' && !token) {
+      navigate('/login');
     } else {
       const decodeToken = jwtDecode(token);
       setId(decodeToken.id);
@@ -29,14 +29,14 @@ export function SuccessPage() {
   useEffect(() => {
     // 데이터 변조 확인
     const requestData = {
-      orderId: searchParams.get("orderId"),
-      amount: searchParams.get("amount"),
-      paymentKey: searchParams.get("paymentKey"),
+      orderId: searchParams.get('orderId'),
+      amount: searchParams.get('amount'),
+      paymentKey: searchParams.get('paymentKey'),
     };
 
     const findRequest = async () => {
       const checkRequest = await fetch(
-        `http://localhost:5000/paymentRequest?orderId=${requestData.orderId}&amount=${requestData.amount}&paymentKey=${requestData.paymentKey}`
+        `${process.env.REACT_APP_SERVER}/paymentRequest?orderId=${requestData.orderId}&amount=${requestData.amount}&paymentKey=${requestData.paymentKey}`
       );
       const body = await checkRequest.json();
       return body;
@@ -47,8 +47,8 @@ export function SuccessPage() {
 
       // 서버로부터의 응답을 검사하여 결제 요청이 변조되었는지 확인
       if (arrayResponse.length === 0 || arrayResponse[0].isValid === false) {
-        console.error("Error: 결제 요청이 변조되었습니다.");
-        navigate("/toss/fail?message=결제 요청이 변조되었습니다.");
+        console.error('Error: 결제 요청이 변조되었습니다.');
+        navigate('/toss/fail?message=결제 요청이 변조되었습니다.');
         return; // 변조된 요청일 때 결제 로직을 중단
       }
 
@@ -59,7 +59,7 @@ export function SuccessPage() {
       setOptionList(productOptionIds);
       setArrayList(arrayResponse);
 
-      console.log("arrayList", arrayList[0]);
+      console.log('arrayList', arrayList[0]);
       // console.log("arrayList", arrayList[0]?.items);
       // console.log("arrayList[0]?.items[0].amount", arrayList[0]?.items[0].amount);
     }
@@ -69,7 +69,9 @@ export function SuccessPage() {
 
   useEffect(() => {
     const findStock = async () => {
-      const response = await fetch("http://localhost:5000/productOption");
+      const response = await fetch(
+        `${process.env.REACT_APP_SERVER}/productOption`
+      );
       const stocks = await response.json();
       const selectedProductOption = stocks.filter((option) =>
         optionList.includes(option.id)
@@ -79,7 +81,7 @@ export function SuccessPage() {
     const getStockList = async () => {
       const test = await findStock();
       setStockList(test);
-      console.log("test", stockList);
+      console.log('test', stockList);
     };
     getStockList();
   }, [navigate, searchParams, optionList]);
@@ -104,19 +106,19 @@ export function SuccessPage() {
       }
 
       if (checkStockAndAmount(stockList, arrayList[0].items)) {
-        console.log("재고량 초과");
+        console.log('재고량 초과');
       }
 
       const requestData = {
-        orderId: searchParams.get("orderId"),
-        amount: searchParams.get("amount"),
-        paymentKey: searchParams.get("paymentKey"),
+        orderId: searchParams.get('orderId'),
+        amount: searchParams.get('amount'),
+        paymentKey: searchParams.get('paymentKey'),
       };
 
-      const response = await fetch("http://localhost:5000/confirm", {
-        method: "POST",
+      const response = await fetch(`${process.env.REACT_APP_SERVER}/confirm`, {
+        method: 'POST',
         headers: {
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
         },
         body: JSON.stringify(requestData),
       });
@@ -138,25 +140,28 @@ export function SuccessPage() {
         stock: item.stock - arrayList[0].items[i].amount,
       }));
 
-      console.log("editOption", option);
+      console.log('editOption', option);
 
       const updateRes = await axios.put(
-        "http://localhost:5000/productOption",
+        `${process.env.REACT_APP_SERVER}/productOption`,
         option
       );
 
       if (!updateRes.data.success) {
-        alert("주문에 실패했습니다. 다시 시도해주세요.");
+        alert('주문에 실패했습니다. 다시 시도해주세요.');
         return;
       }
 
       // 구매 내역 추가
       const body = { list: arrayList[0].items, user_id: id };
 
-      const addingRes = await axios.post("http://localhost:5000/buyList", body);
+      const addingRes = await axios.post(
+        `${process.env.REACT_APP_SERVER}/buyList`,
+        body
+      );
 
       if (!addingRes.data.success) {
-        alert("주문에 실패했습니다. 다시 시도해주세요.");
+        alert('주문에 실패했습니다. 다시 시도해주세요.');
         return;
       }
 
@@ -164,35 +169,41 @@ export function SuccessPage() {
       const carry = {
         list: arrayList[0].items,
         user_id: id,
-        order_id: searchParams.get("orderId"),
+        order_id: searchParams.get('orderId'),
         mainAddress: arrayList[0].mainAddress,
         detailAddress: arrayList[0].detailAddress,
         carryMessage: arrayList[0].carryMessage,
       };
 
-      const carryRes = await axios.post("http://localhost:5000/carry", carry);
+      const carryRes = await axios.post(
+        `${process.env.REACT_APP_SERVER}/carry`,
+        carry
+      );
 
       if (!carryRes.data.success) {
-        alert("주문에 실패했습니다. 다시 시도해주세요.");
+        alert('주문에 실패했습니다. 다시 시도해주세요.');
         return;
       }
 
       // 장바구니 삭제
-      const deletingRes = await axios.delete("http://localhost:5000/cart", {
-        data: body,
-      });
+      const deletingRes = await axios.delete(
+        `${process.env.REACT_APP_SERVER}/cart`,
+        {
+          data: body,
+        }
+      );
 
       if (!deletingRes.data.success) {
-        alert("주문에 실패했습니다. 다시 시도해주세요.");
+        alert('주문에 실패했습니다. 다시 시도해주세요.');
         return;
       }
 
       console.log(json);
-      console.log("json.easyPay.provider", json.easyPay.provider);
-      navigate("/paysuccess", {
+      console.log('json.easyPay.provider', json.easyPay.provider);
+      navigate('/paysuccess', {
         state: {
           list: arrayList[0].items,
-          orderSum: {paySumTotal: searchParams.get("amount")},
+          orderSum: { paySumTotal: searchParams.get('amount') },
           paySelect: json.easyPay.provider,
         },
       });
@@ -207,7 +218,7 @@ export function SuccessPage() {
       {false ? (
         <div className="result wrapper">
           <div className="box_section">
-            <h2 style={{ padding: "20px 0px 10px 0px" }}>
+            <h2 style={{ padding: '20px 0px 10px 0px' }}>
               <img
                 width="35px"
                 src="https://static.toss.im/3d-emojis/u1F389_apng.png"
@@ -215,17 +226,17 @@ export function SuccessPage() {
               />
               결제 성공
             </h2>
-            <p>{`주문번호: ${searchParams.get("orderId")}`}</p>
+            <p>{`주문번호: ${searchParams.get('orderId')}`}</p>
             <p>{`결제 금액: ${Number(
-              searchParams.get("amount")
+              searchParams.get('amount')
             ).toLocaleString()}원`}</p>
-            <p>{`paymentKey: ${searchParams.get("paymentKey")}`}</p>
+            <p>{`paymentKey: ${searchParams.get('paymentKey')}`}</p>
           </div>
         </div>
       ) : (
         <div className="result wrapper">
           <div className="box_section">
-            <h2 style={{ padding: "20px 0px 10px 0px" }}>
+            <h2 style={{ padding: '20px 0px 10px 0px' }}>
               {/* <img
                 width="35px"
                 src="https://static.toss.im/3d-emojis/u1F389_apng.png"

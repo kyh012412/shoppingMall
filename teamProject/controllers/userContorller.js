@@ -1,18 +1,18 @@
-require("dotenv").config();
-const passport = require("passport");
-const cron = require("node-cron");
-const jwt = require("jsonwebtoken");
-const crypto = require("crypto");
-const nodemailer = require("nodemailer");
+require('dotenv').config();
+const passport = require('passport');
+const cron = require('node-cron');
+const jwt = require('jsonwebtoken');
+const crypto = require('crypto');
+const nodemailer = require('nodemailer');
 
 //db
-const db = require("../models");
+const db = require('../models');
 const { User, DeleteUser, ReviewList, Cart, BuyList, Carry } = db;
 
 //imgbb 활용할 때 쓸 키
 //env에 넣고 쓸 수 없어 여기에 적어둬야 할듯...
-const imgbbKey = "41be9bc26229e3df57a9818ed955b889";
-const imgbbUploader = require("imgbb-uploader");
+const imgbbKey = process.env.IMGBB_API_KEY;
+const imgbbUploader = require('imgbb-uploader');
 
 //토큰 시크릿 키
 const JWT_SECRET_KEY = process.env.JWT_SECRET_KEY;
@@ -33,14 +33,14 @@ exports.loadDeleteUser = async (req, res) => {
 
 // 회원 기간만료후 물리적삭제
 cron.schedule =
-  ("0 0 * * *",
+  ('0 0 * * *',
   async () => {
-    console.log("매 정각마다 스케줄링이 실행됩니다");
+    console.log('매 정각마다 스케줄링이 실행됩니다');
 
     const today = new Date();
     const delUser = await DeleteUser.findAll();
     if (delUser) {
-      delUser.forEach(async e => {
+      delUser.forEach(async (e) => {
         if (today > e.deleteDate) {
           await DeleteUser.destroy({ where: { deleteDate: e.deleteDate } });
           await Carry.destroy({ where: { user_id: e.user_id } });
@@ -75,11 +75,11 @@ exports.userCreate = async (req, res) => {
 
 //로그인
 exports.userLogin = (req, res, next) => {
-  passport.authenticate("local", (error, user, info) => {
+  passport.authenticate('local', (error, user, info) => {
     if (error) return res.status(500).json(error);
     if (!user) return res.status(401).json(info.message);
 
-    req.logIn(user, err => {
+    req.logIn(user, (err) => {
       if (err) return next(err);
 
       const token = jwt.sign(
@@ -111,7 +111,7 @@ exports.userInfoUpdate = async (req, res) => {
 
   const options = {
     apiKey: imgbbKey,
-    base64string: editUser.profileImg.split(",")[1],
+    base64string: editUser.profileImg.split(',')[1],
   };
 
   let result = await User.findOne({ where: { id } });
@@ -139,7 +139,7 @@ exports.passwordCheck = async (req, res) => {
     if (result.password == typeingpassword.password) {
       res.json();
     } else {
-      res.status(401).json({ message: "비밀번호가 일치하지 않습니다" });
+      res.status(401).json({ message: '비밀번호가 일치하지 않습니다' });
     }
   }
 };
@@ -151,7 +151,7 @@ const transporter = nodemailer.createTransport({
   auth: {
     user: email_admin, // 작성자 이메일
     pass: email_password, // 비밀번호
-    method: "PLAIN",
+    method: 'PLAIN',
   },
 });
 
@@ -162,13 +162,13 @@ exports.findId = async (req, res) => {
   let passNum;
   if (result) {
     const randombyte = crypto.randomBytes(3);
-    const randomNumber = randombyte.toString("hex");
+    const randomNumber = randombyte.toString('hex');
     passNum = randomNumber;
     const mailOptions = {
       // 이메일 발신자/수신자/내용 설정
       from: email_admin, // 작성자
       to: email, // 수신자
-      subject: "Pick&Fit에서 인증번호를 보냅니다", //제목
+      subject: 'Pick&Fit에서 인증번호를 보냅니다', //제목
       text: `인증번호 : ${randomNumber}`, // 내용
     };
     transporter.sendMail(mailOptions, (error, info) => {
@@ -176,7 +176,7 @@ exports.findId = async (req, res) => {
       if (error) {
         console.log(error);
       } else {
-        console.log("인증번호발송 성공");
+        console.log('인증번호발송 성공');
       }
     });
     res.json({ message: true, passNum, userId: result.userId });
@@ -192,13 +192,13 @@ exports.findPassword = async (req, res) => {
   let passNum;
   if (result) {
     const randombyte = crypto.randomBytes(3);
-    const randomNumber = randombyte.toString("hex");
+    const randomNumber = randombyte.toString('hex');
     passNum = randomNumber;
     const mailOptions = {
       // 이메일 발신자/수신자/내용 설정
       from: email_admin, // 작성자
       to: email, // 수신자
-      subject: "Pick&Fit에서 인증번호를 보냅니다", //제목
+      subject: 'Pick&Fit에서 인증번호를 보냅니다', //제목
       text: `인증번호 : ${randomNumber}`, // 내용
     };
     transporter.sendMail(mailOptions, (error, info) => {
@@ -206,7 +206,7 @@ exports.findPassword = async (req, res) => {
       if (error) {
         console.log(error);
       } else {
-        console.log("인증번호발송 성공");
+        console.log('인증번호발송 성공');
       }
     });
     res.json({ message: true, passNum, findUser: result.id });
@@ -223,7 +223,7 @@ exports.updatedPassword = async (req, res) => {
   if (result) {
     result.password = password;
     await result.save();
-    res.json({ message: "비밀번호 변경성공" });
+    res.json({ message: '비밀번호 변경성공' });
   }
 };
 
@@ -234,7 +234,7 @@ exports.deletedUser = async (req, res) => {
   if (result) {
     result.isDeleted = true; // 논리적삭제
     await result.save();
-    res.send({ message: "삭제성공" });
+    res.send({ message: '삭제성공' });
 
     const deleteDate = new Date();
     deleteDate.setDate(deleteDate.getDate() + 30); // 물리적삭제 날짜기간정함
@@ -253,7 +253,7 @@ exports.deletedUser = async (req, res) => {
       deleteDate: deleteDate,
     });
   } else {
-    res.status(404).send({ message: "db와 일치하지않음" });
+    res.status(404).send({ message: 'db와 일치하지않음' });
   }
 };
 

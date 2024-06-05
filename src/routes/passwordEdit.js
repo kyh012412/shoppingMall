@@ -1,7 +1,7 @@
-import { useLocation, useNavigate } from "react-router-dom";
-import "../css/passwordEdit.css";
-import { useEffect, useRef, useState } from "react";
-import { Myalter } from "../components/Myalter";
+import { useLocation, useNavigate } from 'react-router-dom';
+import '../css/passwordEdit.css';
+import { useEffect, useRef, useState } from 'react';
+import { Myalter } from '../components/Myalter';
 
 export const PasswordEdit = () => {
   const navigate = useNavigate();
@@ -12,13 +12,13 @@ export const PasswordEdit = () => {
     if (location.state) {
       SetId(location.state.id);
     } else {
-      navigate("/");
+      navigate('/');
     }
   }, []);
 
   const [input, setInput] = useState({
-    password: "",
-    passwordCheck: "",
+    password: '',
+    passwordCheck: '',
   });
 
   const valueChange = (e) => {
@@ -32,7 +32,7 @@ export const PasswordEdit = () => {
     const isNumber = /[0-9]/.test(input.password);
     const isSymbol = /[!@#$%^&*()\-_=+{}\/:;"',.]/.test(input.password);
     if (!input.password) {
-      Myalter("warning", "비밀변호 변경 가이드", "비밀번호를 입력하시오");
+      Myalter('warning', '비밀변호 변경 가이드', '비밀번호를 입력하시오');
     } else if (
       !(
         (isAlphabet && isNumber) ||
@@ -40,32 +40,44 @@ export const PasswordEdit = () => {
         (isNumber && isSymbol)
       )
     ) {
-      Myalter("warning", "비밀변호 변경 가이드", "비밀 번호는 영문 대소문자/숫자/특수문자 중 2가지 이상을 조합해야 합니다");
+      Myalter(
+        'warning',
+        '비밀변호 변경 가이드',
+        '비밀 번호는 영문 대소문자/숫자/특수문자 중 2가지 이상을 조합해야 합니다'
+      );
     } else if (!input.passwordCheck) {
-      Myalter("warning", "비밀변호 변경 가이드", "비밀번호 확인을 입력하시오");
+      Myalter('warning', '비밀변호 변경 가이드', '비밀번호 확인을 입력하시오');
     } else if (input.password != input.passwordCheck) {
-      Myalter("warning", "비밀변호 변경 가이드", "비밀번호와 비밀번호확인이 일치하지않습니다");
+      Myalter(
+        'warning',
+        '비밀변호 변경 가이드',
+        '비밀번호와 비밀번호확인이 일치하지않습니다'
+      );
     } else {
       try {
         const response = await fetch(
-          `http://localhost:5000/passwordEdit/${id}`,
+          `${process.env.REACT_APP_SERVER}/passwordEdit/${id}`,
           {
-            method: "PUT",
-            headers: { "Content-Type": "application/json" },
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(input),
           }
         );
         if (!response.ok) {
-          throw new Error("서버에서 응답을 받을 수 없습니다");
+          throw new Error('서버에서 응답을 받을 수 없습니다');
         } else {
           const result = await response.json();
           if (result) {
-            Myalter("success", "비밀변호 변경 가이드", result.message);
-            navigate("/login");
+            Myalter('success', '비밀변호 변경 가이드', result.message);
+            navigate('/login');
           }
         }
       } catch (error) {
-        Myalter("warning", "비밀변호 변경 가이드", "비밀번호 변경 중 오류가 발생했습니다");
+        Myalter(
+          'warning',
+          '비밀변호 변경 가이드',
+          '비밀번호 변경 중 오류가 발생했습니다'
+        );
       }
     }
   };
@@ -74,18 +86,18 @@ export const PasswordEdit = () => {
   const placeRef2 = useRef(null);
 
   const inputFocus = (e) => {
-    if (e.target.name === "password") {
-      placeRef.current.style.top = "7px";
+    if (e.target.name === 'password') {
+      placeRef.current.style.top = '7px';
     } else {
-      placeRef2.current.style.top = "7px";
+      placeRef2.current.style.top = '7px';
     }
   };
 
   const inputBlur = (e) => {
-    if (e.target.name === "password" && !e.target.value) {
-      placeRef.current.style.top = "25px";
-    } else if (e.target.name === "passwordCheck" && !e.target.value) {
-      placeRef2.current.style.top = "25px";
+    if (e.target.name === 'password' && !e.target.value) {
+      placeRef.current.style.top = '25px';
+    } else if (e.target.name === 'passwordCheck' && !e.target.value) {
+      placeRef2.current.style.top = '25px';
     }
   };
 

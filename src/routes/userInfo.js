@@ -1,18 +1,18 @@
-import { Link, useNavigate } from "react-router-dom";
-import { jwtDecode } from "jwt-decode";
-import { useEffect, useState } from "react";
-import Swal from "sweetalert2";
-import "../css/userInfo.css";
+import { Link, useNavigate } from 'react-router-dom';
+import { jwtDecode } from 'jwt-decode';
+import { useEffect, useState } from 'react';
+import Swal from 'sweetalert2';
+import '../css/userInfo.css';
 
 export const UserInfo = () => {
-  const [imageUrl, setImageUrl] = useState("");
+  const [imageUrl, setImageUrl] = useState('');
   const navigate = useNavigate();
   const [id, setId] = useState(0);
 
   useEffect(() => {
-    const token = sessionStorage.getItem("token");
+    const token = sessionStorage.getItem('token');
     if (!token) {
-      navigate("/");
+      navigate('/');
     } else {
       const decodeToken = jwtDecode(token);
       setId(decodeToken.id);
@@ -21,71 +21,75 @@ export const UserInfo = () => {
   }, [id]);
 
   const fetchData = async (id) => {
-    const response = await fetch(`http://localhost:5000/userInfo/${id}`);
+    const response = await fetch(
+      `${process.env.REACT_APP_SERVER}/userInfo/${id}`
+    );
     const body = await response.json();
     setImageUrl(body.data);
   };
 
   const logOut = (e) => {
     e.preventDefault();
-    sessionStorage.removeItem("token");
+    sessionStorage.removeItem('token');
 
     Swal.fire({
-      icon: "success",
-      title: "로그아웃 성공",
+      icon: 'success',
+      title: '로그아웃 성공',
     }).then(() => {
-      navigate("/");
+      navigate('/');
     });
   };
 
   const deleteButton = async (e) => {
     e.preventDefault();
 
-    const response = await fetch(`http://localhost:5000/userProfile/${id}`);
+    const response = await fetch(
+      `${process.env.REACT_APP_SERVER}/userProfile/${id}`
+    );
     const body = await response.json();
 
     const delCode = `${body.userName}는 탈퇴하겠습니다`;
 
     const delReult = await Swal.fire({
-      icon: "info",
-      title: "회원탈퇴 가이드",
+      icon: 'info',
+      title: '회원탈퇴 가이드',
       text: `회원탈퇴를 원하시면 "${body.userName}는 탈퇴하겠습니다" 입력하시오 `,
-      input: "text",
-      confirmButtonText: "확인",
+      input: 'text',
+      confirmButtonText: '확인',
       showCancelButton: true,
-      cancelButtonText: "취소",
+      cancelButtonText: '취소',
     });
 
     if (delReult.value == delCode) {
       try {
         const response = await fetch(
-          `http://localhost:5000/userinfo/put/${id}`,
-          { method: "PUT" }
+          `${process.env.REACT_APP_SERVER}/userinfo/put/${id}`,
+          { method: 'PUT' }
         );
 
         if (!response.ok) {
-          throw new Error("서버에서 응답을 받을 수 없습니다");
+          throw new Error('서버에서 응답을 받을 수 없습니다');
         } else {
-          sessionStorage.removeItem("token");
+          sessionStorage.removeItem('token');
           Swal.fire({
-            icon: "success",
-            title: "회원탈퇴 성공",
+            icon: 'success',
+            title: '회원탈퇴 성공',
           }).then(() => {
-            navigate("/");
+            navigate('/');
           });
         }
       } catch (error) {
         Swal.fire({
-          icon: "warning",
-          title: "회원탈퇴 가이드",
-          text: "유저 삭제중 오류가 발생했습니다",
+          icon: 'warning',
+          title: '회원탈퇴 가이드',
+          text: '유저 삭제중 오류가 발생했습니다',
         });
       }
     } else {
       Swal.fire({
-        icon: "warning",
-        title: "회원탈퇴 가이드",
-        text: "회원탈퇴 실패",
+        icon: 'warning',
+        title: '회원탈퇴 가이드',
+        text: '회원탈퇴 실패',
       });
     }
   };
@@ -95,8 +99,8 @@ export const UserInfo = () => {
       <div className="overlapGroupWrapper">
         <img
           className="profileImage"
-          src={imageUrl ? imageUrl : "/img/userDefaultImg.png"}
-          onError={() => setImageUrl("/img/userDefaultImg.png")}
+          src={imageUrl ? imageUrl : '/img/userDefaultImg.png'}
+          onError={() => setImageUrl('/img/userDefaultImg.png')}
           alt="프로필 이미지"
         />
         <div className="overlapGroup">

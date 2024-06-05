@@ -1,8 +1,8 @@
-import React, { useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import "../css/productReview.css";
+import React, { useEffect, useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import '../css/productReview.css';
 
-export const ProductReview = props => {
+export const ProductReview = (props) => {
   const navigate = useNavigate();
   const { handleSwitchBtn, id, item } = props;
 
@@ -13,7 +13,7 @@ export const ProductReview = props => {
   const [offset, setOffset] = useState(0);
   const limit = 5;
 
-  const handleOffset = index => {
+  const handleOffset = (index) => {
     if (index === 0) {
       setOffset(0);
     } else {
@@ -22,22 +22,22 @@ export const ProductReview = props => {
   };
 
   const handleNavigate = () => {
-    navigate("/payBuyList");
+    navigate('/payBuyList');
   };
 
   useEffect(() => {
     // user 데이터 가져오기
-    fetch("http://localhost:5000/user")
-      .then(response => response.json())
-      .then(data => setUserList(data));
+    fetch(`${process.env.REACT_APP_SERVER}/user`)
+      .then((response) => response.json())
+      .then((data) => setUserList(data));
 
     // reviewList 데이터 가져오기
     fetch(
       //item = productId
-      `http://localhost:5000/reviewList?buyList_id=${item}&offset=${offset}&limit=${limit}`
+      `${process.env.REACT_APP_SERVER}/reviewList?buyList_id=${item}&offset=${offset}&limit=${limit}`
     )
-      .then(response => response.json())
-      .then(data => {
+      .then((response) => response.json())
+      .then((data) => {
         if (data.rows?.length > 0) {
           setReviewList(data.rows);
           setPagingSize(Math.ceil(data.count / limit));
@@ -66,7 +66,7 @@ export const ProductReview = props => {
           </div>
           {reviewList.length !== 0 ? (
             reviewList.map((el, i) => {
-              const user = userList.find(user => user.id === el.user_id);
+              const user = userList.find((user) => user.id === el.user_id);
               return (
                 <div className="reviewerInfoWrapper" key={el.id}>
                   <div className="reviewerInfo2">
@@ -89,19 +89,19 @@ export const ProductReview = props => {
                           <img
                             className="star"
                             key={i}
-                            src={process.env.PUBLIC_URL + "/img/fullStar.svg"}
+                            src={process.env.PUBLIC_URL + '/img/fullStar.svg'}
                             alt="켜진별"
-                            width={"50px"}
-                            style={{ display: "inline" }}
+                            width={'50px'}
+                            style={{ display: 'inline' }}
                           />
                         ) : (
                           <img
                             className="star"
                             key={i}
-                            src={process.env.PUBLIC_URL + "/img/emptyStar.svg"}
+                            src={process.env.PUBLIC_URL + '/img/emptyStar.svg'}
                             alt="꺼진별"
-                            width={"50px"}
-                            style={{ display: "inline" }}
+                            width={'50px'}
+                            style={{ display: 'inline' }}
                           />
                         );
                       })}
@@ -109,37 +109,37 @@ export const ProductReview = props => {
                     <span className="evaluation">
                       별점 : {el.starPoint} /
                       {el.starPoint === 1
-                        ? "매우 별로에요"
+                        ? '매우 별로에요'
                         : el.starPoint === 2
-                        ? "별로에요"
+                        ? '별로에요'
                         : el.starPoint === 3
-                        ? "보통이에요"
+                        ? '보통이에요'
                         : el.starPoint === 4
-                        ? "만족해요"
+                        ? '만족해요'
                         : el.starPoint === 5
-                        ? "매우 만족해요"
-                        : ""}
+                        ? '매우 만족해요'
+                        : ''}
                     </span>
                     <div className="reviewCreatedAt">
                       {el.reviewDate.substring(0, 10)}
                     </div>
                     <div className="productColor">
                       {el.reviewColor === 0
-                        ? "밝아요"
+                        ? '밝아요'
                         : el.reviewColor === 1
-                        ? "화면과 같아요"
+                        ? '화면과 같아요'
                         : el.reviewColor === 2
-                        ? "어두워요"
-                        : ""}{" "}
+                        ? '어두워요'
+                        : ''}{' '}
                     </div>
                     <div className="productSize">
                       {el.reviewSize === 0
-                        ? "작아요"
+                        ? '작아요'
                         : el.reviewSize === 1
-                        ? "정사이즈에요"
+                        ? '정사이즈에요'
                         : el.reviewSize === 2
-                        ? "커요"
-                        : ""}
+                        ? '커요'
+                        : ''}
                     </div>
                     <div className="productDetail">{el.content}</div>
                   </div>
@@ -155,7 +155,7 @@ export const ProductReview = props => {
             })
           ) : (
             <div className="reviewerInfoWrapper">
-              <div className="reviewImageBox" style={{ width: "100%" }}>
+              <div className="reviewImageBox" style={{ width: '100%' }}>
                 <p className="noReivew">
                   등록된 리뷰가 없습니다.
                   <br />
@@ -170,7 +170,7 @@ export const ProductReview = props => {
                 <div
                   key={index}
                   onClick={() => handleOffset(index)}
-                  style={{ padding: "0 20px", cursor: "pointer" }}
+                  style={{ padding: '0 20px', cursor: 'pointer' }}
                 >
                   {index + 1}
                 </div>

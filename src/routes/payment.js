@@ -1,21 +1,21 @@
-import React, { useEffect, useLayoutEffect, useState, useRef } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
-import "../css/payment.css";
+import React, { useEffect, useLayoutEffect, useState, useRef } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
+import '../css/payment.css';
 
-import { PaymentItem } from "../components/PaymentItem";
-import ButtonBox from "../components/ButtonBox";
-import { jwtDecode } from "jwt-decode";
-import AddressModal from "../components/AddressModal";
-import CustomButton from "../components/CustomButton";
-import { Nav } from "../components/nav";
-import { Myalter } from "../components/Myalter";
+import { PaymentItem } from '../components/PaymentItem';
+import ButtonBox from '../components/ButtonBox';
+import { jwtDecode } from 'jwt-decode';
+import AddressModal from '../components/AddressModal';
+import CustomButton from '../components/CustomButton';
+import { Nav } from '../components/nav';
+import { Myalter } from '../components/Myalter';
 // import axios from "axios";
 
 export const Payment = () => {
   //배송요청 직접입력
-  const [selectedOption, setSelectedOption] = useState("선택해주세요");
-  const [userProfile, setUserProfile] = useState({ address: "" });
-  const [id, setId] = useState("");
+  const [selectedOption, setSelectedOption] = useState('선택해주세요');
+  const [userProfile, setUserProfile] = useState({ address: '' });
+  const [id, setId] = useState('');
   const navigate = useNavigate();
   const location = useLocation();
   //useRef 는 태그를 편하게 지칭하거나 값을 임시적으로 담기 좋다
@@ -24,13 +24,13 @@ export const Payment = () => {
   const detailAddressRef = useRef(null);
   //완료 or 수정하기위한 변수 선언
   const [isAddressEditable, setIsAddressEditable] = useState(true);
-  const [paySelect, setPaySelect] = useState("");
+  const [paySelect, setPaySelect] = useState('');
   const [paymentItemList, setPaymentItemList] = useState([]);
   const [newUser, setNewUser] = useState({
-    mainAddress: "",
-    detailAddress: "",
+    mainAddress: '',
+    detailAddress: '',
   });
-  const [carryMessage, setCarryMessage] = useState("carryMessage1");
+  const [carryMessage, setCarryMessage] = useState('carryMessage1');
 
   // console.log("newUser", newUser);
   // console.log("carryMessage", carryMessage);
@@ -66,7 +66,9 @@ export const Payment = () => {
   };
 
   const userFetch = async () => {
-    const response = await fetch(`http://localhost:5000/userProfile/${id}`);
+    const response = await fetch(
+      `${process.env.REACT_APP_SERVER}/userProfile/${id}`
+    );
     const body = await response.json();
     return body;
   };
@@ -77,7 +79,7 @@ export const Payment = () => {
   };
 
   const handleAddressFinish = () => {
-    if (detailAddressRef.current.value === "") {
+    if (detailAddressRef.current.value === '') {
       return;
     }
     setIsAddressEditable(!isAddressEditable);
@@ -91,15 +93,15 @@ export const Payment = () => {
 
   const handleAllPayment = () => {
     console.log(selectedOption);
-    if (selectedOption === "") {
-      Myalter("waning", "error", "배송요청 메세지를 선택해 주세요");
+    if (selectedOption === '') {
+      Myalter('waning', 'error', '배송요청 메세지를 선택해 주세요');
       return;
     }
-    navigate("/toss", {
+    navigate('/toss', {
       state: {
         paymentList: location.state.list,
         orderSum,
-        paySelect: "test",
+        paySelect: 'test',
         address: newUser,
         carryMessage,
       },
@@ -124,15 +126,15 @@ export const Payment = () => {
 
   //user id 가져오기위한 useEffect
   useEffect(() => {
-    const token = sessionStorage.getItem("token");
-    if (id === "" && !token) {
-      navigate("/login");
+    const token = sessionStorage.getItem('token');
+    if (id === '' && !token) {
+      navigate('/login');
     } else {
       const decodeToken = jwtDecode(token);
       setId(decodeToken.id);
     }
 
-    if (id !== "") {
+    if (id !== '') {
       getUserProfile();
     }
   }, [id]);
@@ -157,8 +159,8 @@ export const Payment = () => {
   //cart의 선택된 상품을 전달받아 list에 저장
   useEffect(() => {
     if (!location.state) {
-      alert("잘못된 접근입니다 !");
-      navigate("/cart");
+      alert('잘못된 접근입니다 !');
+      navigate('/cart');
       return;
     }
     const { list } = location.state; //cart에서 navigate로 보낸 cartItemList를 location으로 list란 이름으로 받음
@@ -222,13 +224,13 @@ export const Payment = () => {
                     style={{
                       color:
                         //최초에 그릴때 ref와 태그와 연결되기전 current안에있는value를 찾으려하면 버그발생을 막기위해 ? 사용
-                        detailAddressRef.current?.value === ""
-                          ? "black"
-                          : "gray",
+                        detailAddressRef.current?.value === ''
+                          ? 'black'
+                          : 'gray',
                       cursor:
-                        detailAddressRef.current?.value === ""
-                          ? "cursor"
-                          : "pointer",
+                        detailAddressRef.current?.value === ''
+                          ? 'cursor'
+                          : 'pointer',
                     }}
                   >
                     {isAddressEditable ? (
@@ -263,7 +265,7 @@ export const Payment = () => {
                     className="carryDirectMessage"
                     placeholder="여기에 배송요청 사항을 직접 입력하세요"
                     maxLength="100"
-                    hidden={selectedOption !== ""}
+                    hidden={selectedOption !== ''}
                     value={carryMessage}
                     onChange={handleCarryMessage}
                   />

@@ -1,12 +1,12 @@
-import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import "../css/payBuyList.css";
+import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import '../css/payBuyList.css';
 
-import { PayItem } from "../components/PayBuyListItem";
-import { Nav } from "../components/nav";
-import ButtonBox from "../components/ButtonBox";
-import CustomButton from "../components/CustomButton";
-import { jwtDecode } from "jwt-decode";
+import { PayItem } from '../components/PayBuyListItem';
+import { Nav } from '../components/nav';
+import ButtonBox from '../components/ButtonBox';
+import CustomButton from '../components/CustomButton';
+import { jwtDecode } from 'jwt-decode';
 
 export const PayBuyList = () => {
   //네비게이션 선언
@@ -21,21 +21,23 @@ export const PayBuyList = () => {
   };
 
   const handleHomeMove = () => {
-    navigate("/");
+    navigate('/');
   };
 
   const getPayItemList = async () => {
     // console.log(id);
-    const response = await fetch(`http://localhost:5000/buyList/${id}`);
+    const response = await fetch(
+      `${process.env.REACT_APP_SERVER}/buyList/${id}`
+    );
     const payOrderList = await response.json();
     setPayItemList(payOrderList);
   };
 
   //로그인한 유저의 id 가져오기
   useEffect(() => {
-    const token = sessionStorage.getItem("token");
+    const token = sessionStorage.getItem('token');
     if (!token) {
-      navigate("/login");
+      navigate('/login');
     } else {
       const decodeToken = jwtDecode(token);
       setId(decodeToken.id);
@@ -44,39 +46,41 @@ export const PayBuyList = () => {
 
   useEffect(() => {
     //유저의 id로 구매내역 조회
-    if (id !== "") {
+    if (id !== '') {
       //id가 빈문자열일때 한번 실행
       //실제 id가 든 상태로 재실행시 아래함수 실행
       getPayItemList();
     }
   }, [id]);
 
-  const handleDeleteItem = async val => {
+  const handleDeleteItem = async (val) => {
     try {
       //구매내역 삭제 코드
       const response = await fetch(
-        `http://localhost:5000/buyList/delete/${val.id}`,
+        `${process.env.REACT_APP_SERVER}/buyList/delete/${val.id}`,
         {
-          method: "DELETE",
+          method: 'DELETE',
         }
       );
 
       if (response.ok) {
         // alert('삭제 완료');
-        setPayItemList(prevList => prevList.filter(item => item.id !== val.id));
+        setPayItemList((prevList) =>
+          prevList.filter((item) => item.id !== val.id)
+        );
       } else {
-        throw new Error("서버에서 아이템 삭제 실패");
+        throw new Error('서버에서 아이템 삭제 실패');
       }
     } catch (error) {
       console.error(error);
-      alert("구매 내역 삭제 중 오류가 발생했습니다");
+      alert('구매 내역 삭제 중 오류가 발생했습니다');
     }
   };
 
-  const handleAddToCart = async val => {
-    let newItem = payItemList.find(item => item.id === val.id);
+  const handleAddToCart = async (val) => {
+    let newItem = payItemList.find((item) => item.id === val.id);
 
-    console.log("newItem", newItem);
+    console.log('newItem', newItem);
 
     const addItem = {
       size: newItem.productSize,
@@ -89,9 +93,9 @@ export const PayBuyList = () => {
     };
 
     try {
-      await fetch("http://localhost:5000/cart", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
+      await fetch(`${process.env.REACT_APP_SERVER}/cart`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(addItem),
       });
     } catch (error) {

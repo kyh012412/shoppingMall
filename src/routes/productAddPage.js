@@ -1,16 +1,16 @@
-import React, { useEffect, useRef, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import "../css/productAdd.css";
-import { XCircleFill } from "react-bootstrap-icons";
-import Swal from "sweetalert2";
+import React, { useEffect, useRef, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import '../css/productAdd.css';
+import { XCircleFill } from 'react-bootstrap-icons';
+import Swal from 'sweetalert2';
 
 //컴포넌트
-import { Nav } from "../components/nav";
-import { SubImagePreview } from "../components/subImgPreview";
-import { ProductOption } from "../components/productOptionAdd";
-import { MyDropzone } from "../components/DropZone";
-import ButtonBox from "../components/ButtonBox";
-import CustomButton from "../components/CustomButton";
+import { Nav } from '../components/nav';
+import { SubImagePreview } from '../components/subImgPreview';
+import { ProductOption } from '../components/productOptionAdd';
+import { MyDropzone } from '../components/DropZone';
+import ButtonBox from '../components/ButtonBox';
+import CustomButton from '../components/CustomButton';
 
 export const ProductAdd = () => {
   const navigate = useNavigate();
@@ -19,51 +19,51 @@ export const ProductAdd = () => {
     navigate(-1);
   };
 
-  const category = ["아우터", "상의", "하의", "신발", "악세사리"];
-  const [checkCategory, setCheckCategory] = useState("");
+  const category = ['아우터', '상의', '하의', '신발', '악세사리'];
+  const [checkCategory, setCheckCategory] = useState('');
   const [count, setCount] = useState(1);
 
   const detail = {
-    아우터: ["코트", "블레이저", "패딩", "자켓", "가디건"],
-    상의: ["반팔", "긴팔", "티셔츠", "니트", "나시"],
-    하의: ["청바지", "슬랙스", "카고바지", "반바지"],
-    신발: ["샌들/슬리퍼", "운동화/단화", "구두/워커"],
-    악세사리: ["양말", "가방", "피어싱", "헤어", "기타"],
+    아우터: ['코트', '블레이저', '패딩', '자켓', '가디건'],
+    상의: ['반팔', '긴팔', '티셔츠', '니트', '나시'],
+    하의: ['청바지', '슬랙스', '카고바지', '반바지'],
+    신발: ['샌들/슬리퍼', '운동화/단화', '구두/워커'],
+    악세사리: ['양말', '가방', '피어싱', '헤어', '기타'],
   };
 
   const [detailBar, setDetailBar] = useState([]);
-  const [checkDetail, setCheckDetail] = useState("");
+  const [checkDetail, setCheckDetail] = useState('');
 
-  const [mainImageFile, setMainImageFile] = useState("");
+  const [mainImageFile, setMainImageFile] = useState('');
   const mainImgRef = useRef();
 
   const subImageCount = [0, 1, 2];
-  const subImageId = ["subImage1", "subImage2", "subImage3"];
+  const subImageId = ['subImage1', 'subImage2', 'subImage3'];
 
   const previewMainImg = () => {
     const file = mainImgRef.current.files[0];
     const reader = new FileReader();
     if (file) {
-      const extension = file.name.split(".").pop().toLowerCase();
+      const extension = file.name.split('.').pop().toLowerCase();
       const allowedExtensions = [
-        "jpg",
-        "png",
-        "bmp",
-        "gif",
-        "tif",
-        "webp",
-        "heic",
-        "pdf",
+        'jpg',
+        'png',
+        'bmp',
+        'gif',
+        'tif',
+        'webp',
+        'heic',
+        'pdf',
       ]; // 허용되는 확장자 목록
 
       if (!allowedExtensions.includes(extension)) {
         Swal.fire({
-          icon: "error",
-          categoryTitle: "이미지를 업로드하는데 실패했습니다.",
+          icon: 'error',
+          categoryTitle: '이미지를 업로드하는데 실패했습니다.',
           text: `${file.name} 파일은 허용되지 않는 확장자입니다.`,
           showConfirmButton: true,
-          confirmButtonText: "확인",
-          confirmButtonColor: "#007bff",
+          confirmButtonText: '확인',
+          confirmButtonColor: '#007bff',
         });
         mainImgRef.value = mainImageFile; // 파일 선택 취소
         return; // 다음 파일 처리 중단
@@ -83,13 +83,13 @@ export const ProductAdd = () => {
 
   const checkOnlyOneCategory = (checkThis) => {
     checkThis.checked === false
-      ? setCheckCategory("")
+      ? setCheckCategory('')
       : setCheckCategory(checkThis.name);
   };
 
   const checkOnlyOneDetail = (checkThis) => {
     checkThis.checked === false
-      ? setCheckDetail("")
+      ? setCheckDetail('')
       : setCheckDetail(checkThis.name);
   };
 
@@ -99,7 +99,7 @@ export const ProductAdd = () => {
       category: checkCategory,
       detail: checkDetail,
     }));
-    checkCategory !== ""
+    checkCategory !== ''
       ? setDetailBar(detail[checkCategory])
       : setDetailBar([]);
   };
@@ -107,15 +107,15 @@ export const ProductAdd = () => {
   const [newOption, setNewOption] = useState([]);
 
   const [newProduct, setNewProduct] = useState({
-    category: "",
-    detail: "",
-    name: "",
+    category: '',
+    detail: '',
+    name: '',
     price: 0,
     mainImage: null,
     subImage1: null,
     subImage2: null,
     subImage3: null,
-    description: "",
+    description: '',
   });
 
   const valueChange = (e) => {
@@ -155,104 +155,104 @@ export const ProductAdd = () => {
     e.preventDefault();
 
     try {
-      if (newProduct.category === "") {
+      if (newProduct.category === '') {
         Swal.fire({
-          icon: "warning",
-          categoryTitle: "카테고리 란이 비어있습니다.",
+          icon: 'warning',
+          categoryTitle: '카테고리 란이 비어있습니다.',
           text: ` 카테고리를 선택해주세요.`,
           showConfirmButton: true,
-          confirmButtonText: "확인",
-          confirmButtonColor: "#007bff",
+          confirmButtonText: '확인',
+          confirmButtonColor: '#007bff',
         });
         return;
       }
-      if (newProduct.detail === "") {
+      if (newProduct.detail === '') {
         Swal.fire({
-          icon: "warning",
-          categoryTitle: "디테일 란이 비어있습니다.",
+          icon: 'warning',
+          categoryTitle: '디테일 란이 비어있습니다.',
           text: ` 디테일을 선택해주세요.`,
           showConfirmButton: true,
-          confirmButtonText: "확인",
-          confirmButtonColor: "#007bff",
+          confirmButtonText: '확인',
+          confirmButtonColor: '#007bff',
         });
         return;
       }
-      if (newProduct.name === "" || newProduct.name === null) {
+      if (newProduct.name === '' || newProduct.name === null) {
         Swal.fire({
-          icon: "warning",
-          categoryTitle: "이름 란이 비어있습니다.",
+          icon: 'warning',
+          categoryTitle: '이름 란이 비어있습니다.',
           text: ` 상품의 이름을 입력해주세요.`,
           showConfirmButton: true,
-          confirmButtonText: "확인",
-          confirmButtonColor: "#007bff",
+          confirmButtonText: '확인',
+          confirmButtonColor: '#007bff',
         });
         return;
       }
       if (newProduct.price <= 0) {
         Swal.fire({
-          icon: "warning",
+          icon: 'warning',
           categoryTitle:
-            "가격을 입력하지 않았거나 올바르게 입력하지 않았습니다.",
+            '가격을 입력하지 않았거나 올바르게 입력하지 않았습니다.',
           text: ` 가격을 입력해주세요.`,
           showConfirmButton: true,
-          confirmButtonText: "확인",
-          confirmButtonColor: "#007bff",
+          confirmButtonText: '확인',
+          confirmButtonColor: '#007bff',
         });
         return;
       }
-      if (newProduct.mainImage === null || newProduct.mainImage === "") {
+      if (newProduct.mainImage === null || newProduct.mainImage === '') {
         Swal.fire({
-          icon: "warning",
-          categoryTitle: "이미지를 선택하지 않았습니다.",
+          icon: 'warning',
+          categoryTitle: '이미지를 선택하지 않았습니다.',
           text: ` 상품의 메인이미지를 선택주세요.`,
           showConfirmButton: true,
-          confirmButtonText: "확인",
-          confirmButtonColor: "#007bff",
+          confirmButtonText: '확인',
+          confirmButtonColor: '#007bff',
         });
         return;
       }
       if (newOption[0] === undefined) {
         Swal.fire({
-          icon: "warning",
-          categoryTitle: "옵션 Error.",
+          icon: 'warning',
+          categoryTitle: '옵션 Error.',
           text: ` 옵션을 추가해주세요.`,
           showConfirmButton: true,
-          confirmButtonText: "확인",
-          confirmButtonColor: "#007bff",
+          confirmButtonText: '확인',
+          confirmButtonColor: '#007bff',
         });
         return;
       }
       for (let index of newOption) {
         if (index.color == null) {
           Swal.fire({
-            icon: "warning",
-            categoryTitle: "색상이 비어있습니다.",
+            icon: 'warning',
+            categoryTitle: '색상이 비어있습니다.',
             text: ` 상품의 색상을 입력해주세요.`,
             showConfirmButton: true,
-            confirmButtonText: "확인",
-            confirmButtonColor: "#007bff",
+            confirmButtonText: '확인',
+            confirmButtonColor: '#007bff',
           });
           return;
         }
         if (index.size === undefined) {
           Swal.fire({
-            icon: "warning",
-            categoryTitle: "선택하지 않은 사이즈가 있습니다.",
+            icon: 'warning',
+            categoryTitle: '선택하지 않은 사이즈가 있습니다.',
             text: ` 해당 옵션의 사이즈를 입력해주세요.`,
             showConfirmButton: true,
-            confirmButtonText: "확인",
-            confirmButtonColor: "#007bff",
+            confirmButtonText: '확인',
+            confirmButtonColor: '#007bff',
           });
           return;
         }
         if (index.stock < 1) {
           Swal.fire({
-            icon: "warning",
-            categoryTitle: "옵션의 수량 오류.",
+            icon: 'warning',
+            categoryTitle: '옵션의 수량 오류.',
             text: ` 재고를 올바르게 입력했는지 확인해주세요.`,
             showConfirmButton: true,
-            confirmButtonText: "확인",
-            confirmButtonColor: "#007bff",
+            confirmButtonText: '확인',
+            confirmButtonColor: '#007bff',
           });
           return;
         }
@@ -264,35 +264,35 @@ export const ProductAdd = () => {
         descriptionImgArray,
       };
 
-      await fetch("http://localhost:5000/addProduct", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
+      await fetch(`${process.env.REACT_APP_SERVER}/addProduct`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(body),
       }).then((res) => {
         res.json();
         if (res.ok) {
           Swal.fire({
-            icon: "success",
-            title: "성공",
-            text: "제품 추가하는데 성공했습니다.",
+            icon: 'success',
+            title: '성공',
+            text: '제품 추가하는데 성공했습니다.',
             showConfirmButton: true,
-            confirmButtonText: "확인",
-            confirmButtonColor: "#007bff",
+            confirmButtonText: '확인',
+            confirmButtonColor: '#007bff',
           });
           navigate(`/productList`);
         } else {
           Swal.fire({
-            icon: "warning",
-            title: "실패",
-            text: "제품의 추가하는데 실패했습니다.",
+            icon: 'warning',
+            title: '실패',
+            text: '제품의 추가하는데 실패했습니다.',
             showConfirmButton: true,
-            confirmButtonText: "확인",
-            confirmButtonColor: "#007bff",
+            confirmButtonText: '확인',
+            confirmButtonColor: '#007bff',
           });
         }
       });
     } catch (error) {
-      alert("제품 추가 중 오류가 발생했습니다.");
+      alert('제품 추가 중 오류가 발생했습니다.');
       console.log(error);
       return;
     }
@@ -382,8 +382,8 @@ export const ProductAdd = () => {
                   <img
                     style={
                       !mainImageFile
-                        ? { display: "none" }
-                        : { display: "block" }
+                        ? { display: 'none' }
+                        : { display: 'block' }
                     }
                     className="previewImg main"
                     src={mainImageFile}
@@ -400,10 +400,10 @@ export const ProductAdd = () => {
                 </div>
                 <p
                   style={{
-                    display: "inline-block",
-                    margin: "0 15px",
-                    color: "#ccc",
-                    fontSize: "15px",
+                    display: 'inline-block',
+                    margin: '0 15px',
+                    color: '#ccc',
+                    fontSize: '15px',
                   }}
                 >
                   이미지파일은 ".jpg", ".png", ".bmp", ".gif", ".tif", ".webp",
@@ -439,7 +439,7 @@ export const ProductAdd = () => {
             <div className="descriptionImgWrap">
               {descriptionImgArray.map((img, index) => {
                 return (
-                  <div key={index} style={{ display: "flex" }}>
+                  <div key={index} style={{ display: 'flex' }}>
                     <img src={img} alt="이미지" className="descriptionImg" />
                     <XCircleFill
                       className="deleteDescription"
